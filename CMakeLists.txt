@@ -14,7 +14,7 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 ## Find dependencies
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
-# find_package(libgphoto2 REQUIRED)
+find_library(GPHOTO2_LIB gphoto2)
 
 ## Include ImGui "libray"
 set(IMGUI_DIR lib/imgui)
@@ -63,6 +63,9 @@ set(EXEC_ROOT src/)
 include_directories(
     ${EXEC_ROOT}/Camera
     ${EXEC_ROOT}/CameraManager
+    ${EXEC_ROOT}/ChildConsole
+    ${EXEC_ROOT}/Console
+    ${EXEC_ROOT}/Exception
     ${EXEC_ROOT}/Frame
     ${EXEC_ROOT}/Screen
     ${EXEC_ROOT}/
@@ -72,6 +75,9 @@ include_directories(
 set(EXEC_SRC
     ${EXEC_ROOT}/Camera/Camera.cpp
     ${EXEC_ROOT}/CameraManager/CameraManager.cpp
+    ${EXEC_ROOT}/ChildConsole/ChildConsole.cpp
+    ${EXEC_ROOT}/Console/Console.cpp
+    ${EXEC_ROOT}/Exception/Exception.cpp
     ${EXEC_ROOT}/Frame/Frame.cpp
     ${EXEC_ROOT}/Screen/Screen.cpp
     ${EXEC_ROOT}/Explorer400D.cpp
@@ -85,6 +91,7 @@ target_link_libraries(${EXEC}
     OpenGL
     glfw
     ${EXTRA_LIBS}
+    ${GPHOTO2_LIB}
 )
 
 ## Set output directory

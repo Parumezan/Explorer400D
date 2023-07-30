@@ -2,7 +2,7 @@
 
 using namespace Explorer400D;
 
-Screen::Screen()
+Screen::Screen(std::shared_ptr<Console> console) : _console(console), _cameraManager(console)
 {
     // Initialize the window with GLFW
     if (!glfwInit())
@@ -88,6 +88,9 @@ void Screen::mainMenuBar()
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Tools")) {
+            // TODO: Fix the console state
+            // console = shared_ptr<Console>();
+            ImGui::MenuItem("Console", "Ctrl+O", this->_console->state);
             ImGui::MenuItem("Camera Manager", "Ctrl+M", &this->_cameraManager.state);
             ImGui::EndMenu();
         }
