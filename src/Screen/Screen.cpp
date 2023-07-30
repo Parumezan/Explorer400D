@@ -7,7 +7,7 @@ Screen::Screen()
     // Initialize the window with GLFW
     if (!glfwInit())
         return;
-    this->_window = std::shared_ptr<GLFWwindow>(glfwCreateWindow(1600, 900, "Pitbox", NULL, NULL), glfwDestroyWindow);
+    this->_window = std::shared_ptr<GLFWwindow>(glfwCreateWindow(1600, 900, "Explorer400D", NULL, NULL), glfwDestroyWindow);
     if (!this->_window)
         return;
     glfwMakeContextCurrent(this->_window.get());
@@ -63,4 +63,34 @@ void Screen::windowLoop()
 
 void Screen::mainMenuBar()
 {
+    if (this->_cameraManager.state)
+        this->_cameraManager.frameLoop();
+
+    // TODO: Integrate the event for actions (open, save, save as, exit)
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            // if (ImGui::MenuItem("Open", "Ctrl+O")) {
+            //     // TODO
+            // }
+            // if (ImGui::MenuItem("Save", "Ctrl+S")) {
+            //     // TODO
+            // }
+            // if (ImGui::MenuItem("Save as", "Ctrl+Shift+S")) {
+            //     // TODO
+            // }
+            // ImGui::Separator();
+            // ImGui::MenuItem("Import", "Ctrl+I", &this->_importer.state);
+            // ImGui::Separator();
+            // ImGui::MenuItem("Export", "Ctrl+Shift+E", &this->_exporter.state);
+            // ImGui::Separator();
+            if (ImGui::MenuItem("Exit", "Ctrl+Q"))
+                glfwSetWindowShouldClose(this->_window.get(), true);
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Tools")) {
+            ImGui::MenuItem("Camera Manager", "Ctrl+M", &this->_cameraManager.state);
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
 }

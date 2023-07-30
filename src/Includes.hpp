@@ -19,4 +19,7 @@
     #include "dirent.h"
 #endif
 
+// gphoto2
+#include <gphoto2/gphoto2.h>
+
 #endif /* !INCLUDES_HPP_ */

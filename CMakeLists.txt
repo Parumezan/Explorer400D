@@ -14,6 +14,7 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 ## Find dependencies
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
+# find_package(libgphoto2 REQUIRED)
 
 ## Include ImGui "libray"
 set(IMGUI_DIR lib/imgui)
@@ -41,7 +42,7 @@ if(WIN32)
     include_directories(${DIRENT_DIR})
 endif()
 
-## Include stb "libray" (used by ImGuiFileDialog and for Pitbox)
+## Include stb "libray" (used by ImGuiFileDialog and for Explorer400D)
 set(STB_DIR lib/stb)
 include_directories(${STB_DIR})
 
@@ -60,6 +61,8 @@ set(EXEC_ROOT src/)
 
 ## Include directories
 include_directories(
+    ${EXEC_ROOT}/Camera
+    ${EXEC_ROOT}/CameraManager
     ${EXEC_ROOT}/Frame
     ${EXEC_ROOT}/Screen
     ${EXEC_ROOT}/
@@ -67,6 +70,8 @@ include_directories(
 
 ## List source files
 set(EXEC_SRC
+    ${EXEC_ROOT}/Camera/Camera.cpp
+    ${EXEC_ROOT}/CameraManager/CameraManager.cpp
     ${EXEC_ROOT}/Frame/Frame.cpp
     ${EXEC_ROOT}/Screen/Screen.cpp
     ${EXEC_ROOT}/Explorer400D.cpp
