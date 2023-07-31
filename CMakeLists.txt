@@ -14,6 +14,7 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 ## Find dependencies
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(CURL REQUIRED)
 find_library(GPHOTO2_LIB gphoto2)
 
 ## Include ImGui "libray"
@@ -77,6 +78,7 @@ include_directories(
     ${EXEC_ROOT}/Exception
     ${EXEC_ROOT}/Frame
     ${EXEC_ROOT}/Screen
+    ${EXEC_ROOT}/Settings
     ${EXEC_ROOT}/Weather
     ${EXEC_ROOT}/
 )
@@ -90,6 +92,7 @@ set(EXEC_SRC
     ${EXEC_ROOT}/Exception/Exception.cpp
     ${EXEC_ROOT}/Frame/Frame.cpp
     ${EXEC_ROOT}/Screen/Screen.cpp
+    ${EXEC_ROOT}/Settings/Settings.cpp
     ${EXEC_ROOT}/Weather/Weather.cpp
     ${EXEC_ROOT}/Explorer400D.cpp
 )
@@ -101,6 +104,7 @@ add_executable(${EXEC} ${IMGUI} ${EXEC_SRC})
 target_link_libraries(${EXEC}
     OpenGL
     glfw
+    CURL::libcurl
     ${EXTRA_LIBS}
     ${GPHOTO2_LIB}
 )

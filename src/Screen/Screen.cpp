@@ -2,7 +2,7 @@
 
 using namespace Explorer400D;
 
-Screen::Screen(std::shared_ptr<Console> console) : _console(console), _cameraManager(console), _weather(console)
+Screen::Screen(std::shared_ptr<Console> console) : _console(console), _cameraManager(console), _weather(console), _settings(console)
 {
     // Initialize the window with GLFW
     if (!glfwInit())
@@ -71,6 +71,8 @@ void Screen::mainMenuBar()
         this->_cameraManager.frameLoop();
     if (this->_weather.state)
         this->_weather.frameLoop();
+    if (this->_settings.state)
+        this->_settings.frameLoop();
 
     // TODO: Integrate the event for actions (open, save, save as, exit)
     if (ImGui::BeginMainMenuBar()) {
@@ -88,7 +90,8 @@ void Screen::mainMenuBar()
             // ImGui::MenuItem("Import", "Ctrl+I", &this->_importer.state);
             // ImGui::Separator();
             // ImGui::MenuItem("Export", "Ctrl+Shift+E", &this->_exporter.state);
-            // ImGui::Separator();
+            ImGui::MenuItem("Settings", "Ctrl+P", &this->_settings.state);
+            ImGui::Separator();
             if (ImGui::MenuItem("Exit", "Ctrl+Q"))
                 glfwSetWindowShouldClose(this->_window.get(), true);
             ImGui::EndMenu();

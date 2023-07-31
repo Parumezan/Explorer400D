@@ -5,6 +5,7 @@
 #include "CameraManager.hpp"
 #include "Console.hpp"
 #include "Includes.hpp"
+#include "Settings.hpp"
 #include "Weather.hpp"
 
 namespace Explorer400D
@@ -16,6 +17,7 @@ namespace Explorer400D
             std::shared_ptr<Console> _console;
             CameraManager _cameraManager;
             Weather _weather;
+            Settings _settings;
             void windowLoop();
             void mainMenuBar();
 

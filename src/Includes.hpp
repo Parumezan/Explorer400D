@@ -29,6 +29,9 @@
 // gphoto2
 #include <gphoto2/gphoto2.h>
 
+// curl
+#include <curl/curl.h>
+
 // Explorer400D
 #define HISTORY_SIZE 2048
 
