@@ -2,7 +2,7 @@
 
 using namespace Explorer400D;
 
-Screen::Screen(std::shared_ptr<Console> console) : _console(console), _cameraManager(console)
+Screen::Screen(std::shared_ptr<Console> console) : _console(console), _cameraManager(console), _weather(console)
 {
     // Initialize the window with GLFW
     if (!glfwInit())
@@ -15,6 +15,7 @@ Screen::Screen(std::shared_ptr<Console> console) : _console(console), _cameraMan
     // Initialize ImGui with GLFW & OpenGL
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImPlot::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -29,6 +30,7 @@ Screen::~Screen()
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
+    ImPlot::DestroyContext();
     ImGui::DestroyContext();
     glfwDestroyWindow(this->_window.get());
     glfwTerminate();
@@ -63,8 +65,12 @@ void Screen::windowLoop()
 
 void Screen::mainMenuBar()
 {
+    if (this->_console->state)
+        this->_console->frameLoop();
     if (this->_cameraManager.state)
         this->_cameraManager.frameLoop();
+    if (this->_weather.state)
+        this->_weather.frameLoop();
 
     // TODO: Integrate the event for actions (open, save, save as, exit)
     if (ImGui::BeginMainMenuBar()) {
@@ -90,7 +96,8 @@ void Screen::mainMenuBar()
         if (ImGui::BeginMenu("Tools")) {
             // TODO: Fix the console state
             // console = shared_ptr<Console>();
-            ImGui::MenuItem("Console", "Ctrl+O", this->_console->state);
+            ImGui::MenuItem("Console", "Ctrl+O", &this->_console->state);
+            ImGui::MenuItem("Weather", "Ctrl+W", &this->_weather.state);
             ImGui::MenuItem("Camera Manager", "Ctrl+M", &this->_cameraManager.state);
             ImGui::EndMenu();
         }

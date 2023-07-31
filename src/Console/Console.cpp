@@ -122,5 +122,7 @@ void Console::putHistory(std::string const &msg)
 void Console::frameLoop()
 {
     ImGui::Begin("Console", &this->state);
+    for (auto &msg : this->_history)
+        ImGui::Text("%s", msg.c_str());
     ImGui::End();
 }

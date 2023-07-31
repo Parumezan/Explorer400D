@@ -29,6 +29,15 @@ list(APPEND IMGUI
     ${IMGUI_DIR}/imgui.cpp
 )
 
+## Include ImPlot "libray"
+set(IMGUIPLOT_DIR lib/implot)
+include_directories(${IMGUIPLOT_DIR})
+list(APPEND IMGUI
+    ${IMGUIPLOT_DIR}/implot.cpp
+    ${IMGUIPLOT_DIR}/implot_demo.cpp
+    ${IMGUIPLOT_DIR}/implot_items.cpp
+)
+
 ## Include ImGuiFileDialog "libray"
 set(ImGuiFileDialog_DIR lib/ImGuiFileDialog)
 include_directories(${ImGuiFileDialog_DIR})
@@ -68,6 +77,7 @@ include_directories(
     ${EXEC_ROOT}/Exception
     ${EXEC_ROOT}/Frame
     ${EXEC_ROOT}/Screen
+    ${EXEC_ROOT}/Weather
     ${EXEC_ROOT}/
 )
 
@@ -80,6 +90,7 @@ set(EXEC_SRC
     ${EXEC_ROOT}/Exception/Exception.cpp
     ${EXEC_ROOT}/Frame/Frame.cpp
     ${EXEC_ROOT}/Screen/Screen.cpp
+    ${EXEC_ROOT}/Weather/Weather.cpp
     ${EXEC_ROOT}/Explorer400D.cpp
 )
 

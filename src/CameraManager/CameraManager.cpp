@@ -7,7 +7,7 @@ using namespace Explorer400D;
 CameraManager::CameraManager(std::shared_ptr<Console> console) : ChildConsole(console)
 {
     this->_console->info("Initializing Camera Manager...");
-    this->_context = gp_context_new();
+    // this->_context = gp_context_new();
     this->_console->info("Camera Manager initialized");
     int value = this->searchCameras();
     this->_console->info("Searched for cameras (" + std::to_string(value) + ")");
@@ -25,8 +25,9 @@ void CameraManager::frameLoop()
 
 int CameraManager::searchCameras()
 {
-    this->_console->info("Searching for cameras...");
-    int value = gp_list_reset(this->_cameraList);
-    this->_console->info("Reset camera list (" + std::to_string(value) + ")");
-    return gp_camera_autodetect(this->_cameraList, this->_context);
+    // this->_console->info("Searching for cameras...");
+    // int value = gp_list_reset(this->_cameraList);
+    // this->_console->info("Reset camera list (" + std::to_string(value) + ")");
+    // return gp_camera_autodetect(this->_cameraList, this->_context);
+    return 0;
 }

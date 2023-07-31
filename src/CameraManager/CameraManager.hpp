@@ -2,7 +2,6 @@
 #define CAMERAMANAGER_HPP_
 
 #include "ChildConsole.hpp"
-#include "Console.hpp"
 #include "Frame.hpp"
 #include "Includes.hpp"
 

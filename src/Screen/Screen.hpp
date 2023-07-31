@@ -5,15 +5,17 @@
 #include "CameraManager.hpp"
 #include "Console.hpp"
 #include "Includes.hpp"
+#include "Weather.hpp"
 
 namespace Explorer400D
 {
     class Screen
     {
         private:
+            std::shared_ptr<GLFWwindow> _window;
             std::shared_ptr<Console> _console;
             CameraManager _cameraManager;
-            std::shared_ptr<GLFWwindow> _window;
+            Weather _weather;
             void windowLoop();
             void mainMenuBar();
 
