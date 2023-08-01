@@ -12,6 +12,6 @@ Settings::~Settings()
 
 void Settings::frameLoop()
 {
-    ImGui::Begin("Settings");
+    ImGui::Begin("Settings", &this->state);
     ImGui::End();
 }

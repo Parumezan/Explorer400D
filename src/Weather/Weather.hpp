@@ -10,11 +10,13 @@ namespace Explorer400D
     class Weather : public Frame, public ChildConsole
     {
         private:
+            std::string _apiUrl;
             CURL *_curl;
-            std::string _urlClouds;
-            std::string _urlRain;
 
-            void getWeather();
+            std::string _latitude;
+            std::string _longitude;
+
+            std::string fetchData(std::string url);
 
         public:
             Weather(std::shared_ptr<Console> console);

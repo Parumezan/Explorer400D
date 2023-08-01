@@ -6,11 +6,17 @@ using namespace Explorer400D;
 
 CameraManager::CameraManager(std::shared_ptr<Console> console) : ChildConsole(console)
 {
+    bool isStarted = true;
     this->_console->info("Initializing Camera Manager...");
     // this->_context = gp_context_new();
     this->_console->info("Camera Manager initialized");
     int value = this->searchCameras();
     this->_console->info("Searched for cameras (" + std::to_string(value) + ")");
+    if (isStarted) {
+        this->_console->info("Camera Manager started");
+    } else {
+        this->_console->warn("Camera Manager encountered difficulties");
+    }
 }
 
 CameraManager::~CameraManager()

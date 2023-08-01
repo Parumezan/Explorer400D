@@ -38,7 +38,7 @@ std::string Console::getLocalTime()
 void Console::info(std::string const &msg)
 {
     this->_info++;
-    std::string info = this->getLocalTime() + " TL-Info: " + msg;
+    std::string info = this->getLocalTime() + " E4-Info: " + msg;
     this->putHistory(info);
 
     if (!this->_isQuiet)
@@ -48,7 +48,7 @@ void Console::info(std::string const &msg)
 void Console::warn(std::string const &msg)
 {
     this->_warn++;
-    std::string warn = this->getLocalTime() + " TL-Warn: " + msg;
+    std::string warn = this->getLocalTime() + " E4-Warn: " + msg;
     this->putHistory(warn);
 
     if (!this->_isQuiet)
@@ -58,7 +58,7 @@ void Console::warn(std::string const &msg)
 void Console::error(std::string const &msg)
 {
     this->_error++;
-    std::string error = this->getLocalTime() + " TL-Error: " + msg;
+    std::string error = this->getLocalTime() + " E4-Error: " + msg;
     this->putHistory(error);
 
     if (!this->_isQuiet)
@@ -79,31 +79,28 @@ void Console::print(ConsoleType type, std::string const &msg)
     switch (type) {
     case ConsoleType::INFO:
         SetConsoleTextAttribute(hConsole, 10);
-        std::cout << this->getLocalTime() + " TL-Info: " << msg << std::endl;
+        std::cout << this->getLocalTime() + " E4-Info: " << msg << std::endl;
         break;
     case ConsoleType::WARN:
         SetConsoleTextAttribute(hConsole, 14);
-        std::cout << this->getLocalTime() + " TL-Warn: " << msg << std::endl;
+        std::cout << this->getLocalTime() + " E4-Warn: " << msg << std::endl;
         break;
     case ConsoleType::ERROR:
         SetConsoleTextAttribute(hConsole, 12);
-        std::cerr << this->getLocalTime() + " TL-Error: " << msg << std::endl;
+        std::cerr << this->getLocalTime() + " E4-Error: " << msg << std::endl;
         break;
     }
     SetConsoleTextAttribute(hConsole, 15);
 #else
     switch (type) {
     case ConsoleType::INFO:
-        std::cout << this->getLocalTime() + " TL-Info: "
-                  << "\033[32m" << msg << "\033[0m" << std::endl;
+        std::cout << this->getLocalTime() + " \033[32mE4-Info:\033[0m " << msg << std::endl;
         break;
     case ConsoleType::WARN:
-        std::cout << this->getLocalTime() + " TL-Warn: "
-                  << "\033[33m" << msg << "\033[0m" << std::endl;
+        std::cout << this->getLocalTime() + " \033[33mE4-Warn:\033[0m " << msg << std::endl;
         break;
     case ConsoleType::ERROR:
-        std::cerr << this->getLocalTime() + " TL-Error: "
-                  << "\033[31m" << msg << "\033[0m" << std::endl;
+        std::cerr << this->getLocalTime() + " \033[31mE4-Error:\033[0m " << msg << std::endl;
         break;
     }
 #endif
@@ -122,7 +119,29 @@ void Console::putHistory(std::string const &msg)
 void Console::frameLoop()
 {
     ImGui::Begin("Console", &this->state);
-    for (auto &msg : this->_history)
-        ImGui::Text("%s", msg.c_str());
+    for (auto &msg : this->_history) {
+        // Separate Time and type and message
+        std::string time = msg.substr(0, 8);
+        std::string type = msg.substr(9, 8);
+        std::string message = msg.substr(18);
+
+        // Display time
+        ImGui::Text("%s", time.c_str());
+
+        // Display type
+        ImGui::SameLine();
+        if (type == "E4-Info:")
+            ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "%s", type.c_str());
+        else if (type == "E4-Warn:")
+            ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f), "%s", type.c_str());
+        else if (type == "E4-Error:")
+            ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "%s", type.c_str());
+        else
+            ImGui::Text("%s", type.c_str());
+
+        // Display message
+        ImGui::SameLine();
+        ImGui::Text("%s", message.c_str());
+    }
     ImGui::End();
 }
