@@ -6,7 +6,6 @@ Weather::Weather(std::shared_ptr<Console> console) : ChildConsole(console)
 {
     bool isStarted = true;
     this->_console->info("Initializing weather module...");
-    this->_selectedLocationName = "";
     this->_isFit = true;
     this->_curl = curl_easy_init();
     if (!this->_curl) {
@@ -144,6 +143,65 @@ void Weather::fetchTemperature(std::string url, std::string settings)
     this->_plotTemp = plotTemp;
 }
 
+void Weather::fetchPrecipitation(std::string url, std::string settings)
+{
+    std::string urlPreci = url + "&hourly=precipitation_probability" + settings;
+
+    std::string dataPreci = this->fetchData(urlPreci);
+    if (dataPreci.empty())
+        throw this->_console->throwException("Failed to fetch precipitation weather data");
+
+    nlohmann::json jsonPreci = nlohmann::json::parse(dataPreci);
+
+    PlotPrecipitation_t plotPreci;
+
+    for (auto &element : jsonPreci["hourly"]["time"])
+        plotPreci.time.push_back(element);
+    for (auto &element : jsonPreci["hourly"]["precipitation_probability"])
+        plotPreci.preciProbability.push_back(element);
+
+    this->_plotPreci = plotPreci;
+}
+
+void Weather::fetchWind(std::string url, std::string settings)
+{
+    std::string urlWind = url + "&hourly=windspeed_10m,windspeed_80m,windspeed_120m,windspeed_180m,windgusts_10m" + settings;
+
+    std::string dataWind = this->fetchData(urlWind);
+    if (dataWind.empty())
+        throw this->_console->throwException("Failed to fetch wind weather data");
+
+    nlohmann::json jsonWind = nlohmann::json::parse(dataWind);
+
+    PlotWind_t plotWind;
+
+    for (auto &element : jsonWind["hourly"]["time"])
+        plotWind.time.push_back(element);
+    for (auto &element : jsonWind["hourly"]["windgusts_10m"])
+        plotWind.windGusts10m.push_back(element);
+    for (auto &element : jsonWind["hourly"]["windspeed_10m"])
+        plotWind.windSpeed10m.push_back(element);
+    for (auto &element : jsonWind["hourly"]["windspeed_80m"])
+        plotWind.windSpeed80m.push_back(element);
+    for (auto &element : jsonWind["hourly"]["windspeed_120m"])
+        plotWind.windSpeed120m.push_back(element);
+    for (auto &element : jsonWind["hourly"]["windspeed_180m"])
+        plotWind.windSpeed180m.push_back(element);
+
+    this->_plotWind = plotWind;
+}
+
+void Weather::fetchWeather()
+{
+    std::string url = "https://api.open-meteo.com/v1/forecast?latitude=" + std::to_string(this->_selectedLocation.latitude) + "&longitude=" + std::to_string(this->_selectedLocation.longitude);
+    std::string settings = "&timeformat=unixtime&timezone=auto&forecast_days=7";
+
+    this->fetchClouds(url, settings);
+    this->fetchTemperature(url, settings);
+    this->fetchPrecipitation(url, settings);
+    this->fetchWind(url, settings);
+}
+
 void Weather::drawClouds()
 {
     if (ImPlot::BeginPlot("Cloud Cover", ImVec2(-1, 0), ImPlotFlags_NoMenus)) {
@@ -194,13 +252,46 @@ void Weather::drawTemp()
     }
 }
 
-void Weather::fetchWeather()
+void Weather::drawPreci()
 {
-    std::string url = "https://api.open-meteo.com/v1/forecast?latitude=" + std::to_string(this->_selectedLocation.latitude) + "&longitude=" + std::to_string(this->_selectedLocation.longitude);
-    std::string settings = "&timeformat=unixtime&timezone=auto&forecast_days=7";
+    if (ImPlot::BeginPlot("Precipitation", ImVec2(-1, 0), ImPlotFlags_NoMenus)) {
+        if (this->_plotPreci.preciProbability.size() > 0) {
+            ImPlot::SetupAxes("Time", "Probability in %", 0, ImPlotAxisFlags_AutoFit | ImPlotAxisFlags_RangeFit);
+            ImPlot::SetupAxisScale(ImAxis_X1, ImPlotScale_Time);
+            ImPlot::SetupAxesLimits(this->_plotPreci.time[0], this->_plotPreci.time[this->_plotPreci.time.size() - 1], 0, 100);
+            ImPlot::SetupAxisLimitsConstraints(ImAxis_X1, this->_plotPreci.time[0], this->_plotPreci.time[this->_plotPreci.time.size() - 1]);
+            ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, 0, 100);
 
-    this->fetchClouds(url, settings);
-    this->fetchTemperature(url, settings);
+            ImPlot::PlotLine("Precipitation Probability", this->_plotPreci.time.data(), this->_plotPreci.preciProbability.data(), this->_plotPreci.time.size());
+
+            double actualTime = (double)std::time(0);
+            ImPlot::PlotInfLines("Now", &actualTime, 1);
+        }
+        ImPlot::EndPlot();
+    }
+}
+
+void Weather::drawWind()
+{
+    if (ImPlot::BeginPlot("Wind", ImVec2(-1, 0), ImPlotFlags_NoMenus)) {
+        if (this->_plotWind.windSpeed10m.size() > 0) {
+            ImPlot::SetupAxes("Time", "Wind Speed in hm/h", 0, ImPlotAxisFlags_AutoFit | ImPlotAxisFlags_RangeFit);
+            ImPlot::SetupAxisScale(ImAxis_X1, ImPlotScale_Time);
+            ImPlot::SetupAxesLimits(this->_plotWind.time[0], this->_plotWind.time[this->_plotWind.time.size() - 1], 0, 10000);
+            ImPlot::SetupAxisLimitsConstraints(ImAxis_X1, this->_plotWind.time[0], this->_plotWind.time[this->_plotWind.time.size() - 1]);
+            ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, 0, 10000);
+
+            ImPlot::PlotLine("Wind Speed 180m", this->_plotWind.time.data(), this->_plotWind.windSpeed180m.data(), this->_plotWind.time.size());
+            ImPlot::PlotLine("Wind Speed 120m", this->_plotWind.time.data(), this->_plotWind.windSpeed120m.data(), this->_plotWind.time.size());
+            ImPlot::PlotLine("Wind Speed 80m", this->_plotWind.time.data(), this->_plotWind.windSpeed80m.data(), this->_plotWind.time.size());
+            ImPlot::PlotLine("Wind Speed 10m", this->_plotWind.time.data(), this->_plotWind.windSpeed10m.data(), this->_plotWind.time.size());
+            ImPlot::PlotLine("Wind Gusts 10m", this->_plotWind.time.data(), this->_plotWind.windGusts10m.data(), this->_plotWind.time.size());
+
+            double actualTime = (double)std::time(0);
+            ImPlot::PlotInfLines("Now", &actualTime, 1);
+        }
+        ImPlot::EndPlot();
+    }
 }
 
 void Weather::setLocation()
@@ -252,6 +343,8 @@ void Weather::setLocation()
     if (ImGui::Button("Clear")) {
         this->_plotClouds = {};
         this->_plotTemp = {};
+        this->_plotPreci = {};
+        this->_plotWind = {};
     }
 }
 
@@ -259,20 +352,52 @@ void Weather::frameLoop()
 {
     ImGui::Begin("Weather", &this->state);
 
-    if (ImGui::TreeNodeEx("Set location", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth)) {
+    ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+    if (ImGui::TreeNodeEx("Set location", nodeFlags)) {
         this->setLocation();
         ImGui::TreePop();
     }
 
     ImGui::SeparatorText("Weather Data");
     if (this->_isFit) {
-        this->drawTemp();
-        this->drawClouds();
+        if (ImGui::TreeNodeEx("Temperature", nodeFlags)) {
+            this->drawTemp();
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNodeEx("Cloud Cover", nodeFlags)) {
+            this->drawClouds();
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNodeEx("Precipitation", nodeFlags)) {
+            this->drawPreci();
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNodeEx("Wind", nodeFlags)) {
+            this->drawWind();
+            ImGui::TreePop();
+        }
     } else {
         ImPlot::SetNextAxesToFit();
-        this->drawTemp();
+        if (ImGui::TreeNodeEx("Temperature", nodeFlags)) {
+            this->drawTemp();
+            ImGui::TreePop();
+        }
         ImPlot::SetNextAxesToFit();
-        this->drawClouds();
+        if (ImGui::TreeNodeEx("Cloud Cover", nodeFlags)) {
+            this->drawClouds();
+            ImGui::TreePop();
+        }
+        ImPlot::SetNextAxesToFit();
+        if (ImGui::TreeNodeEx("Precipitation", nodeFlags)) {
+            this->drawPreci();
+            ImGui::TreePop();
+        }
+        ImPlot::SetNextAxesToFit();
+        if (ImGui::TreeNodeEx("Wind", nodeFlags)) {
+            this->drawWind();
+            ImGui::TreePop();
+        }
         this->_isFit = true;
     }
 
