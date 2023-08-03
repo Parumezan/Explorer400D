@@ -17,6 +17,10 @@ find_package(glfw3 REQUIRED)
 find_package(CURL REQUIRED)
 find_library(GPHOTO2_LIB gphoto2)
 
+include(FetchContent)
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
+FetchContent_MakeAvailable(json)
+
 ## Include ImGui "libray"
 set(IMGUI_DIR lib/imgui)
 include_directories(${IMGUI_DIR})
@@ -105,6 +109,7 @@ target_link_libraries(${EXEC}
     OpenGL
     glfw
     CURL::libcurl
+    nlohmann_json::nlohmann_json
     ${EXTRA_LIBS}
     ${GPHOTO2_LIB}
 )

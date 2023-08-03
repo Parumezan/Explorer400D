@@ -2,6 +2,7 @@
 #define INCLUDES_HPP_
 
 #include <GLFW/glfw3.h>
+#include <fstream>
 #include <iostream>
 #include <math.h>
 #include <memory>
@@ -31,6 +32,9 @@
 
 // curl
 #include <curl/curl.h>
+
+// nlohmann/json
+#include <nlohmann/json.hpp>
 
 // Explorer400D
 #define HISTORY_SIZE 2048
