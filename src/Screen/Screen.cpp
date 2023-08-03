@@ -12,10 +12,15 @@ Screen::Screen(std::shared_ptr<Console> console) : _console(console), _cameraMan
         return;
     glfwMakeContextCurrent(this->_window.get());
 
-    // Initialize ImGui with GLFW & OpenGL
+    // Initialize ImGui with GLFW & OpenGL && ImPlot
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImPlot::CreateContext();
+
+    ImPlot::GetStyle().UseLocalTime = true;
+    ImPlot::GetStyle().UseISO8601 = true;
+    ImPlot::GetStyle().Use24HourClock = true;
+
     ImGuiIO &io = ImGui::GetIO();
     (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;

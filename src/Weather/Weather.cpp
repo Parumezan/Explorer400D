@@ -102,52 +102,46 @@ void Weather::fetchWeather()
 
     nlohmann::json jsonClouds = nlohmann::json::parse(dataClouds);
 
-    std::vector<double> time;
-    std::vector<double> cloudCover;
-    std::vector<double> cloudCoverLow;
-    std::vector<double> cloudCoverMid;
-    std::vector<double> cloudCoverHigh;
+    PlotClouds_t plotClouds;
 
     for (auto &element : jsonClouds["hourly"]["time"])
-        time.push_back(element);
+        plotClouds.time.push_back(element);
     for (auto &element : jsonClouds["hourly"]["cloudcover"])
-        cloudCover.push_back(element);
+        plotClouds.cloudCover.push_back(element);
     for (auto &element : jsonClouds["hourly"]["cloudcover_low"])
-        cloudCoverLow.push_back(element);
+        plotClouds.cloudCoverLow.push_back(element);
     for (auto &element : jsonClouds["hourly"]["cloudcover_mid"])
-        cloudCoverMid.push_back(element);
+        plotClouds.cloudCoverMid.push_back(element);
     for (auto &element : jsonClouds["hourly"]["cloudcover_high"])
-        cloudCoverHigh.push_back(element);
+        plotClouds.cloudCoverHigh.push_back(element);
 
-    this->_time = time;
-    this->_cloudCover = cloudCover;
-    this->_cloudCoverLow = cloudCoverLow;
-    this->_cloudCoverMid = cloudCoverMid;
-    this->_cloudCoverHigh = cloudCoverHigh;
+    this->_plotClouds = plotClouds;
 }
 
 void Weather::drawClouds()
 {
-    ImPlot::GetStyle().UseLocalTime;
     if (ImPlot::BeginPlot("Cloud Cover", ImVec2(-1, 0), ImPlotFlags_NoMenus)) {
-        if (this->_cloudCover.size() > 0) {
-            ImPlot::SetupAxes("Hours", "Cloud Cover in %", 0, ImPlotAxisFlags_AutoFit | ImPlotAxisFlags_RangeFit);
+        if (this->_plotClouds.cloudCover.size() > 0) {
+            ImPlot::SetupAxes("Time", "Cloud Cover in %", 0, ImPlotAxisFlags_AutoFit | ImPlotAxisFlags_RangeFit);
             ImPlot::SetupAxisScale(ImAxis_X1, ImPlotScale_Time);
-            ImPlot::SetupAxesLimits(this->_time[0], this->_time[this->_time.size() - 1], 0, 100);
-            ImPlot::SetupAxisLimitsConstraints(ImAxis_X1, this->_time[0], this->_time[this->_time.size() - 1]);
+            ImPlot::SetupAxesLimits(this->_plotClouds.time[0], this->_plotClouds.time[this->_plotClouds.time.size() - 1], 0, 100);
+            ImPlot::SetupAxisLimitsConstraints(ImAxis_X1, this->_plotClouds.time[0], this->_plotClouds.time[this->_plotClouds.time.size() - 1]);
             ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, 0, 100);
 
-            ImPlot::PlotLine("Cloud Cover", this->_time.data(), this->_cloudCover.data(), this->_time.size());
-            ImPlot::PlotLine("Cloud Cover Low", this->_time.data(), this->_cloudCoverLow.data(), this->_time.size());
-            ImPlot::PlotLine("Cloud Cover Mid", this->_time.data(), this->_cloudCoverMid.data(), this->_time.size());
-            ImPlot::PlotLine("Cloud Cover High", this->_time.data(), this->_cloudCoverHigh.data(), this->_time.size());
+            ImPlot::PlotLine("Cloud Cover", this->_plotClouds.time.data(), this->_plotClouds.cloudCover.data(), this->_plotClouds.time.size());
+            ImPlot::PlotLine("Cloud Cover Low", this->_plotClouds.time.data(), this->_plotClouds.cloudCoverLow.data(), this->_plotClouds.time.size());
+            ImPlot::PlotLine("Cloud Cover Mid", this->_plotClouds.time.data(), this->_plotClouds.cloudCoverMid.data(), this->_plotClouds.time.size());
+            ImPlot::PlotLine("Cloud Cover High", this->_plotClouds.time.data(), this->_plotClouds.cloudCoverHigh.data(), this->_plotClouds.time.size());
 
             ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.50f);
 
-            ImPlot::PlotShaded("Cloud Cover", this->_time.data(), this->_cloudCover.data(), this->_time.size(), -INFINITY);
-            ImPlot::PlotShaded("Cloud Cover Low", this->_time.data(), this->_cloudCoverLow.data(), this->_time.size(), -INFINITY);
-            ImPlot::PlotShaded("Cloud Cover Mid", this->_time.data(), this->_cloudCoverMid.data(), this->_time.size(), -INFINITY);
-            ImPlot::PlotShaded("Cloud Cover High", this->_time.data(), this->_cloudCoverHigh.data(), this->_time.size(), -INFINITY);
+            ImPlot::PlotShaded("Cloud Cover", this->_plotClouds.time.data(), this->_plotClouds.cloudCover.data(), this->_plotClouds.time.size(), -INFINITY);
+            ImPlot::PlotShaded("Cloud Cover Low", this->_plotClouds.time.data(), this->_plotClouds.cloudCoverLow.data(), this->_plotClouds.time.size(), -INFINITY);
+            ImPlot::PlotShaded("Cloud Cover Mid", this->_plotClouds.time.data(), this->_plotClouds.cloudCoverMid.data(), this->_plotClouds.time.size(), -INFINITY);
+            ImPlot::PlotShaded("Cloud Cover High", this->_plotClouds.time.data(), this->_plotClouds.cloudCoverHigh.data(), this->_plotClouds.time.size(), -INFINITY);
+
+            double actualTime = (double)std::time(0);
+            ImPlot::PlotInfLines("Now", &actualTime, 1);
         }
         ImPlot::EndPlot();
     }

@@ -14,6 +14,15 @@ namespace Explorer400D
             std::string country;
     } Location_t;
 
+    typedef struct PlotClouds_s {
+            std::vector<double> cloudCover;
+            std::vector<double> cloudCoverLow;
+            std::vector<double> cloudCoverMid;
+            std::vector<double> cloudCoverHigh;
+            std::vector<double> visibility;
+            std::vector<double> time;
+    } PlotClouds_t;
+
     class Weather : public Frame, public ChildConsole
     {
         private:
@@ -22,13 +31,7 @@ namespace Explorer400D
             std::string _longitude;
             std::vector<Location_t> _locations;
             Location_t _selectedLocation;
-
-            std::vector<double> _cloudCover;
-            std::vector<double> _cloudCoverLow;
-            std::vector<double> _cloudCoverMid;
-            std::vector<double> _cloudCoverHigh;
-            std::vector<double> _visibility;
-            std::vector<double> _time;
+            PlotClouds_t _plotClouds;
 
             std::string fetchData(std::string url);
             void fetchLocationSearch(char location[64]);
