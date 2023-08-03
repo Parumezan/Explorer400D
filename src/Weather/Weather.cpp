@@ -6,7 +6,8 @@ Weather::Weather(std::shared_ptr<Console> console) : ChildConsole(console)
 {
     bool isStarted = true;
     this->_console->info("Initializing weather module...");
-    this->_selectedLocation.name = "Select a location";
+    this->_selectedLocationName = "";
+    this->_isFit = true;
     this->_curl = curl_easy_init();
     if (!this->_curl) {
         this->_console->warn("Failed to initialize libcurl");
@@ -74,8 +75,10 @@ void Weather::fetchLocationSearch(char location[64])
 
     data = this->fetchData(url + locationString + settings);
 
-    if (std::string::npos == data.find("results"))
+    if (std::string::npos == data.find("results")) {
+        this->_selectedLocationName = "Failed to find location";
         throw this->_console->throwException("Failed to parse JSON data");
+    }
 
     nlohmann::json json = nlohmann::json::parse(data);
 
@@ -88,17 +91,16 @@ void Weather::fetchLocationSearch(char location[64])
         locations.push_back(location);
     }
     this->_locations = locations;
+    this->_selectedLocationName = "Select a location";
 }
 
-void Weather::fetchWeather()
+void Weather::fetchClouds(std::string url, std::string settings)
 {
-    std::string url = "https://api.open-meteo.com/v1/forecast?latitude=" + std::to_string(this->_selectedLocation.latitude) + "&longitude=" + std::to_string(this->_selectedLocation.longitude);
-    std::string settings = "&timeformat=unixtime&timezone=auto&forecast_days=7";
     std::string urlClouds = url + "&hourly=cloudcover,cloudcover_low,cloudcover_mid,cloudcover_high" + settings;
 
     std::string dataClouds = this->fetchData(urlClouds);
     if (dataClouds.empty())
-        throw this->_console->throwException("Failed to fetch weather data");
+        throw this->_console->throwException("Failed to fetch cloudcover weather data");
 
     nlohmann::json jsonClouds = nlohmann::json::parse(dataClouds);
 
@@ -116,6 +118,30 @@ void Weather::fetchWeather()
         plotClouds.cloudCoverHigh.push_back(element);
 
     this->_plotClouds = plotClouds;
+}
+
+void Weather::fetchTemperature(std::string url, std::string settings)
+{
+    std::string urlTemp = url + "&hourly=temperature_2m,dewpoint_2m,apparent_temperature" + settings;
+
+    std::string dataTemp = this->fetchData(urlTemp);
+    if (dataTemp.empty())
+        throw this->_console->throwException("Failed to fetch temperature weather data");
+
+    nlohmann::json jsonTemp = nlohmann::json::parse(dataTemp);
+
+    PlotTemperature_t plotTemp;
+
+    for (auto &element : jsonTemp["hourly"]["time"])
+        plotTemp.time.push_back(element);
+    for (auto &element : jsonTemp["hourly"]["temperature_2m"])
+        plotTemp.temp.push_back(element);
+    for (auto &element : jsonTemp["hourly"]["dewpoint_2m"])
+        plotTemp.tempDewPoint.push_back(element);
+    for (auto &element : jsonTemp["hourly"]["apparent_temperature"])
+        plotTemp.tempApparent.push_back(element);
+
+    this->_plotTemp = plotTemp;
 }
 
 void Weather::drawClouds()
@@ -147,27 +173,56 @@ void Weather::drawClouds()
     }
 }
 
-void Weather::frameLoop()
+void Weather::drawTemp()
+{
+    if (ImPlot::BeginPlot("Temperature", ImVec2(-1, 0), ImPlotFlags_NoMenus)) {
+        if (this->_plotTemp.temp.size() > 0) {
+            ImPlot::SetupAxes("Time", "Celsius (°C)", 0, ImPlotAxisFlags_AutoFit | ImPlotAxisFlags_RangeFit);
+            ImPlot::SetupAxisScale(ImAxis_X1, ImPlotScale_Time);
+            ImPlot::SetupAxesLimits(this->_plotTemp.time[0], this->_plotTemp.time[this->_plotTemp.time.size() - 1], -100, 100);
+            ImPlot::SetupAxisLimitsConstraints(ImAxis_X1, this->_plotTemp.time[0], this->_plotTemp.time[this->_plotTemp.time.size() - 1]);
+            ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, -100, 100);
+
+            ImPlot::PlotLine("Temperature (2m)", this->_plotTemp.time.data(), this->_plotTemp.temp.data(), this->_plotTemp.time.size());
+            ImPlot::PlotLine("Temp. Apparent", this->_plotTemp.time.data(), this->_plotTemp.tempApparent.data(), this->_plotTemp.time.size());
+            ImPlot::PlotLine("Dewpoint (2m)", this->_plotTemp.time.data(), this->_plotTemp.tempDewPoint.data(), this->_plotTemp.time.size());
+
+            double actualTime = (double)std::time(0);
+            ImPlot::PlotInfLines("Now", &actualTime, 1);
+        }
+        ImPlot::EndPlot();
+    }
+}
+
+void Weather::fetchWeather()
+{
+    std::string url = "https://api.open-meteo.com/v1/forecast?latitude=" + std::to_string(this->_selectedLocation.latitude) + "&longitude=" + std::to_string(this->_selectedLocation.longitude);
+    std::string settings = "&timeformat=unixtime&timezone=auto&forecast_days=7";
+
+    this->fetchClouds(url, settings);
+    this->fetchTemperature(url, settings);
+}
+
+void Weather::setLocation()
 {
     static char latitude[32] = "", longitude[32] = "";
-    static char location[64] = "";
+    static char inputLocation[64] = "";
 
-    ImGui::Begin("Weather", &this->state);
-
-    ImGui::InputText("", location, sizeof(location));
+    ImGui::InputText("", inputLocation, sizeof(inputLocation));
     ImGui::SameLine();
     if (ImGui::Button("Search Location")) {
         try {
-            this->fetchLocationSearch(location);
+            this->fetchLocationSearch(inputLocation);
         } catch (std::exception &error) {
         }
     }
 
-    if (ImGui::BeginCombo("Locations", this->_selectedLocation.name.c_str())) {
+    if (ImGui::BeginCombo("Locations", this->_selectedLocationName.c_str())) {
         for (auto &location : this->_locations) {
             if (ImGui::Selectable((location.name + " (" + location.country + ")").c_str())) {
                 this->_console->info("Selected location: " + location.name + " (" + location.country + ")");
                 this->_selectedLocation = location;
+                this->_selectedLocationName = location.name + " (" + location.country + ")";
                 try {
                     std::memset(latitude, 0, sizeof(latitude));
                     std::memset(longitude, 0, sizeof(longitude));
@@ -184,16 +239,42 @@ void Weather::frameLoop()
     ImGui::InputText("Longitude", longitude, sizeof(longitude), ImGuiInputTextFlags_CharsDecimal);
 
     if (ImGui::Button("Fetch Weather")) {
-        this->_selectedLocation.latitude = std::stof(latitude);
-        this->_selectedLocation.longitude = std::stof(longitude);
         try {
-            ImPlot::SetNextAxesToFit();
+            this->_selectedLocation.latitude = std::stof(latitude);
+            this->_selectedLocation.longitude = std::stof(longitude);
             this->fetchWeather();
+            this->_isFit = false;
         } catch (std::exception &error) {
         }
     }
 
-    this->drawClouds();
+    ImGui::SameLine();
+    if (ImGui::Button("Clear")) {
+        this->_plotClouds = {};
+        this->_plotTemp = {};
+    }
+}
+
+void Weather::frameLoop()
+{
+    ImGui::Begin("Weather", &this->state);
+
+    if (ImGui::TreeNodeEx("Set location", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth)) {
+        this->setLocation();
+        ImGui::TreePop();
+    }
+
+    ImGui::SeparatorText("Weather Data");
+    if (this->_isFit) {
+        this->drawTemp();
+        this->drawClouds();
+    } else {
+        ImPlot::SetNextAxesToFit();
+        this->drawTemp();
+        ImPlot::SetNextAxesToFit();
+        this->drawClouds();
+        this->_isFit = true;
+    }
 
     ImGui::End();
 }

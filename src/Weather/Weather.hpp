@@ -23,6 +23,13 @@ namespace Explorer400D
             std::vector<double> time;
     } PlotClouds_t;
 
+    typedef struct PlotTemperature_s {
+            std::vector<double> temp;
+            std::vector<double> tempApparent;
+            std::vector<double> tempDewPoint;
+            std::vector<double> time;
+    } PlotTemperature_t;
+
     class Weather : public Frame, public ChildConsole
     {
         private:
@@ -31,12 +38,19 @@ namespace Explorer400D
             std::string _longitude;
             std::vector<Location_t> _locations;
             Location_t _selectedLocation;
+            std::string _selectedLocationName;
             PlotClouds_t _plotClouds;
+            PlotTemperature_t _plotTemp;
+            bool _isFit;
 
             std::string fetchData(std::string url);
             void fetchLocationSearch(char location[64]);
-            void fetchWeather();
+            void fetchClouds(std::string url, std::string settings);
+            void fetchTemperature(std::string url, std::string settings);
             void drawClouds();
+            void drawTemp();
+            void fetchWeather();
+            void setLocation();
 
         public:
             Weather(std::shared_ptr<Console> console);
