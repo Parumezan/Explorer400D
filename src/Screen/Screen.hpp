@@ -1,7 +1,6 @@
 #ifndef SCREEN_HPP_
 #define SCREEN_HPP_
 
-#include "Camera.hpp"
 #include "CameraManager.hpp"
 #include "Console.hpp"
 #include "Includes.hpp"

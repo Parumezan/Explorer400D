@@ -27,8 +27,14 @@
     #include "dirent.h"
 #endif
 
-// gphoto2
-#include <gphoto2/gphoto2.h>
+// gphoto2pp
+#include <gphoto2pp/camera_capture_type_wrapper.hpp>
+#include <gphoto2pp/camera_file_wrapper.hpp>
+#include <gphoto2pp/camera_wrapper.hpp>
+#include <gphoto2pp/exceptions.hpp>
+#include <gphoto2pp/helper_gphoto2.hpp>
+#include <gphoto2pp/toggle_widget.hpp>
+#include <gphoto2pp/window_widget.hpp>
 
 // curl
 #include <curl/curl.h>

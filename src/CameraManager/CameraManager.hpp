@@ -10,14 +10,15 @@ namespace Explorer400D
     class CameraManager : public Frame, public ChildConsole
     {
         private:
-            GPContext *_context;
-            CameraList *_cameraList;
+            std::string _model;
+            std::string _port;
+            void autoDetectCameras();
+            void connectCamera();
 
         public:
             CameraManager(std::shared_ptr<Console> console);
             ~CameraManager();
             void frameLoop() override;
-            int searchCameras();
     };
 } // namespace Explorer400D
 

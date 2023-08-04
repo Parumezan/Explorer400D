@@ -15,7 +15,7 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(CURL REQUIRED)
-find_library(GPHOTO2_LIB gphoto2)
+find_library(GPHOTO2PP gphoto2pp)
 
 include(FetchContent)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
@@ -75,7 +75,6 @@ set(EXEC_ROOT src/)
 
 ## Include directories
 include_directories(
-    ${EXEC_ROOT}/Camera
     ${EXEC_ROOT}/CameraManager
     ${EXEC_ROOT}/ChildConsole
     ${EXEC_ROOT}/Console
@@ -89,7 +88,6 @@ include_directories(
 
 ## List source files
 set(EXEC_SRC
-    ${EXEC_ROOT}/Camera/Camera.cpp
     ${EXEC_ROOT}/CameraManager/CameraManager.cpp
     ${EXEC_ROOT}/ChildConsole/ChildConsole.cpp
     ${EXEC_ROOT}/Console/Console.cpp
@@ -110,8 +108,8 @@ target_link_libraries(${EXEC}
     glfw
     CURL::libcurl
     nlohmann_json::nlohmann_json
+    ${GPHOTO2PP} -lgphoto2pp -lgphoto2
     ${EXTRA_LIBS}
-    ${GPHOTO2_LIB}
 )
 
 ## Set output directory
