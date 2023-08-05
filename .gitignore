@@ -1,4 +1,6 @@
+__pycache__
 .vscode
-build
 imgui.ini
+venv
+test.py
 Explorer400D
