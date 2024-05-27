@@ -1,9 +1,0 @@
-{
-    cmdlines = {
-        [[xmake lua C:\msys64\mingw64\share\xmake\modules\private\utils\statistics.lua --yes]],
-        "xmake run",
-        [[xmake l c:\Users\jbbro\.vscode\extensions\tboox.xmake-vscode-2.3.5\assets\explorer.lua]],
-        [[xmake l c:\Users\jbbro\.vscode\extensions\tboox.xmake-vscode-2.3.5\assets\config.lua]],
-        "xmake check"
-    }
-}
