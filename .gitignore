@@ -1,4 +1,12 @@
-.vscode
-build
-imgui.ini
-Explorer400D
+# Xmake cache
+.xmake/
+build/
+
+# MacOS Cache
+.DS_Store
+
+# VSCode settings
+.vscode/
+
+# Tmp files
+test/

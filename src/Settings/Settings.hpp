@@ -1,38 +1,30 @@
 #ifndef SETTINGS_HPP_
 #define SETTINGS_HPP_
 
-#include "Console.hpp"
-#include "Frame.hpp"
 #include "Includes.hpp"
+#include "Module/Module.hpp"
 
 namespace Explorer400D
 {
-    class Settings : public Frame
+    class Settings : public Module
     {
         private:
-            std::shared_ptr<Console> _console;
-            std::string _settingsPath;
-            sqlite3 *_db;
-
-            void initSettings();
-            void initDatabase();
-            void closeDatabase();
-            void saveWidgetStatus(std::map<std::string, bool> widgetStatus);
+            nlohmann::json _settings;
 
         public:
-            Settings(std::shared_ptr<Console> console);
-            ~Settings();
-            void saveConfig();
-            void saveSettings(std::map<std::string, bool> widgetStatus);
-            void setSettingsPath(std::string &path);
+            Settings() = default;
+            ~Settings() = default;
 
-            std::string getSettingsPath();
-            std::map<std::string, bool> getWidgetsStatus();
+            void setSetting(const std::string &key, const nlohmann::json &value);
+            nlohmann::json getSetting(const std::string &key);
+            void deleteSetting(const std::string &key);
 
-            std::string getSettingsVar(std::string varName);
-            void setSettingsVar(std::string varName, std::string varValue);
+            void moduleInit() override;
+            void moduleLoop() override;
+            void moduleClose() override;
 
-            void frameLoop() override;
+            void moduleLoadSettings() override;
+            void moduleSaveSettings() override;
     };
 } // namespace Explorer400D
 

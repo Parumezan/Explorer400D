@@ -2,117 +2,125 @@
 
 using namespace Explorer400D;
 
-CameraManager::CameraManager(std::shared_ptr<Console> console, std::shared_ptr<Settings> settings, std::shared_ptr<ImgViewer> imgViewer) : _console(console), _settings(settings), _imgViewer(imgViewer)
+CameraManager::CameraManager()
 {
-    this->_console->info("Initializing CameraManager module...");
+    this->_context = nullptr;
+    this->_cameraList = nullptr;
+    this->_camera = nullptr;
+    this->_portInfoList = nullptr;
+
     this->_selectedCameraName = "Select a Camera";
-    this->_initFolderPath = false;
-    this->_showCameraInfo = false;
-    this->_folderDialog = false;
+    this->_selectedCameraPort = "";
+    this->_cameraSummary = "";
+
+    this->_folderPath = "C:\\Users\\jbbro\\Pictures\\Camera\\Test";
+
     this->_lastCapture = 0;
     this->_inputShots = 0;
     this->_inputTime = 0;
-    try {
-        this->initFolder();
-    } catch (std::exception &error) {
-        this->_console->throwException(error.what());
-    }
-    this->_console->info("CameraManager module started");
 }
 
-CameraManager::~CameraManager()
+void CameraManager::listConnectedCameras()
 {
-}
+    if (this->_cameraList)
+        gp_list_free(this->_cameraList);
+    gp_list_new(&this->_cameraList);
 
-void CameraManager::autoDetectCameras()
-{
-    gphoto2pp::GPPortInfoListWrapper portInfoListWrapper;
-    gphoto2pp::CameraAbilitiesListWrapper cameraAbilitiesListWrapper;
-    gphoto2pp::CameraListWrapper cameraList = cameraAbilitiesListWrapper.listDetect(portInfoListWrapper);
+    gp_camera_autodetect(this->_cameraList, this->_context);
 
-    if (portInfoListWrapper.count() == 0)
-        throw std::runtime_error("No camera detected");
-    this->_console->info(std::to_string(portInfoListWrapper.count()) + " port(s) detected");
-    this->_cameraList = std::make_shared<gphoto2pp::CameraListWrapper>(cameraList);
-    this->_console->info(std::to_string(this->_cameraList->count()) + " camera(s) detected");
+    this->_numCameras = gp_list_count(this->_cameraList);
+
+    std::string info = "Found " + std::to_string(this->_numCameras) + " camera(s)";
+    spdlog::info(info);
+    this->_selectedCameraName = info;
 }
 
 void CameraManager::connectCamera()
 {
-    this->_camera = std::make_shared<gphoto2pp::CameraWrapper>(this->_model, this->_port);
-    this->_console->info("Camera connected: " + this->_model + " on port " + this->_port);
-    this->_cameraSummary = this->_camera->getSummary();
+    if (this->_camera)
+        gp_camera_free(this->_camera);
+    gp_camera_new(&this->_camera);
+
+    if (this->_portInfoList)
+        gp_port_info_list_free(this->_portInfoList);
+    gp_port_info_list_new(&this->_portInfoList);
+    gp_port_info_list_load(this->_portInfoList);
+
+    GPPortInfo portInfo;
+    int portNumber = gp_port_info_list_lookup_path(this->_portInfoList, this->_selectedCameraPort.c_str());
+    gp_port_info_list_get_info(this->_portInfoList, portNumber, &portInfo);
+    gp_camera_set_port_info(this->_camera, portInfo);
+
+    if (gp_camera_init(this->_camera, this->_context) != GP_OK) {
+        spdlog::error("Failed to initialize camera on port {}", this->_selectedCameraPort);
+        gp_camera_free(this->_camera);
+        return;
+    }
+
+    spdlog::info("Connected to {} on port {}", this->_selectedCameraName, portNumber);
 }
 
 void CameraManager::takePicture()
 {
-    gphoto2pp::CameraFilePathWrapper cameraFilePath;
-    gphoto2pp::CameraFileWrapper cameraFile;
+    CameraFilePath cameraFilePath;
+    gp_camera_capture(this->_camera, GP_CAPTURE_IMAGE, &cameraFilePath, this->_context);
 
-    this->_console->info("Taking picture...");
-    cameraFilePath = this->_camera->capture(gphoto2pp::CameraCaptureTypeWrapper::Image);
+    CameraFile *cameraFile;
+    gp_file_new(&cameraFile);
+    gp_camera_file_get(this->_camera, cameraFilePath.folder, cameraFilePath.name, GP_FILE_TYPE_NORMAL, cameraFile, this->_context);
 
-    this->_console->info("Getting picture...");
-    cameraFile = this->_camera->fileGet(cameraFilePath.Folder, cameraFilePath.Name, gphoto2pp::CameraFileTypeWrapper::Normal);
+    std::string filePath = this->_folderPath + "/" + cameraFilePath.name;
+    gp_file_save(cameraFile, filePath.c_str());
 
-    this->_console->info("Saving picture...");
-    std::string path = this->_folderPath + "/" + cameraFilePath.Name;
-    cameraFile.save(path);
+    gp_file_free(cameraFile);
+    spdlog::info("Saved picture to {}", filePath);
 
-    if (this->_imgViewer->getFolderPath() != "false" && this->_imgViewer->getFolderPath() == this->_folderPath)
-        this->_imgViewer->reloadImages();
-
-    this->_console->info("Deleting picture from camera...");
-    this->_camera->fileDelete(cameraFilePath.Folder, cameraFilePath.Name);
-
-    this->_imgPreview = std::make_shared<ImgLoader>(this->_console, path);
+    gp_camera_file_delete(this->_camera, cameraFilePath.folder, cameraFilePath.name, this->_context);
 }
 
-void CameraManager::setCamera()
+void CameraManager::setupCamera()
 {
     // ! Without a label the combo box doesn't work
     if (ImGui::BeginCombo("-", this->_selectedCameraName.c_str())) {
         if (this->_cameraList != nullptr) {
-            for (int idx = 0; idx < this->_cameraList->count(); idx++) {
-                if (ImGui::Selectable(this->_cameraList->getName(idx).c_str())) {
-                    this->_selectedCameraName = this->_cameraList->getName(idx);
-                    std::pair<std::string, std::string> cameraInfo = this->_cameraList->getPair(idx);
-                    this->_model = cameraInfo.first;
-                    this->_port = cameraInfo.second;
+            for (size_t idx = 0; idx < this->_numCameras; idx++) {
+                const char *cameraName;
+                const char *cameraPort;
+
+                gp_list_get_name(this->_cameraList, idx, &cameraName);
+                gp_list_get_value(this->_cameraList, idx, &cameraPort);
+
+                bool isSelected = (this->_selectedCameraName == cameraName);
+
+                if (ImGui::Selectable(cameraName, isSelected)) {
+                    this->_selectedCameraName = cameraName;
+                    this->_selectedCameraPort = cameraPort;
                 }
-                if (this->_selectedCameraName == this->_cameraList->getName(idx))
+
+                if (this->_selectedCameraName == cameraName)
                     ImGui::SetItemDefaultFocus();
             }
         }
         ImGui::EndCombo();
     }
+
     ImGui::SameLine();
-    if (ImGui::Button("Auto Detect")) {
-        try {
-            this->autoDetectCameras();
-        } catch (std::exception &error) {
-            this->_console->error(error.what());
-        }
-    }
+    if (ImGui::Button("Auto Detect"))
+        this->listConnectedCameras();
+
     ImGui::SameLine();
-    if (ImGui::Button("Connect")) {
-        try {
-            this->connectCamera();
-        } catch (std::exception &error) {
-            this->_console->error(error.what());
-        }
-    }
+    if (ImGui::Button("Connect"))
+        this->connectCamera();
 
     if (this->_camera == nullptr)
         return;
 
     ImGui::SameLine();
     if (ImGui::Button("Disconnect")) {
+        gp_camera_exit(this->_camera, this->_context);
+        gp_camera_free(this->_camera);
         this->_camera = nullptr;
-        this->_cameraList = nullptr;
-        this->_selectedCameraName = "Select a Camera";
-        this->_cameraSummary = "";
-        return;
+        this->_cameraSummary.clear();
     }
 
     if (ImGui::Button("Show Camera Info"))
@@ -122,7 +130,14 @@ void CameraManager::setCamera()
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
     if (ImGui::BeginPopupModal("Camera Info", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+        if (this->_cameraSummary.empty()) {
+            CameraText text;
+            gp_camera_get_summary(this->_camera, &text, this->_context);
+            this->_cameraSummary = text.text;
+        }
+
         ImGui::Text("%s", this->_cameraSummary.c_str());
+
         if (ImGui::Button("Close"))
             ImGui::CloseCurrentPopup();
         ImGui::EndPopup();
@@ -133,39 +148,7 @@ void CameraManager::setCamera()
 
 void CameraManager::folderPart()
 {
-    static char inputPath[64] = "";
-
-    ImGui::InputText("", inputPath, sizeof(inputPath));
-
-    if (this->_initFolderPath) {
-        std::memset(inputPath, 0, sizeof(inputPath));
-        std::strcat(inputPath, this->_folderPath.c_str());
-        this->_initFolderPath = false;
-    }
-
-    ImGui::SameLine();
-    if (ImGui::Button("Open folder"))
-        this->_folderDialog = true;
-
-    if (this->_folderDialog) {
-        ImGuiFileDialogFlags flags = ImGuiFileDialogFlags_DontShowHiddenFiles;
-        std::string path = this->_folderPath == "false" ? "." : this->_folderPath;
-        ImGuiFileDialog::Instance()->OpenDialog("ChooseFolder", "Choose a Directory", nullptr, path, 0, 0, flags);
-
-        if (ImGuiFileDialog::Instance()->Display("ChooseFolder")) {
-            if (ImGuiFileDialog::Instance()->IsOk()) {
-                std::string folderPathName = ImGuiFileDialog::Instance()->GetFilePathName();
-                this->_console->info("Selected folder: " + folderPathName);
-                this->_folderPath = folderPathName;
-                this->_initFolderPath = true;
-                this->_folderDialog = false;
-            }
-            ImGuiFileDialog::Instance()->Close();
-            this->_folderDialog = false;
-        }
-    }
-
-    if (this->_folderPath == "false" || this->_folderPath == "")
+    if (this->_folderPath.empty())
         return;
 
     this->picturePart();
@@ -173,22 +156,14 @@ void CameraManager::folderPart()
 
 void CameraManager::picturePart()
 {
-    if (ImGui::Button("Take Picture")) {
-        try {
-            this->takePicture();
-        } catch (std::exception &error) {
-            this->_console->error(error.what());
-        }
-    }
+    if (ImGui::Button("Take Picture"))
+        this->takePicture();
 
     static bool autoCapture = false;
-    static bool showImgViewer = false;
     ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
     ImGui::SameLine();
     ImGui::Checkbox("Auto Capture", &autoCapture);
-    ImGui::SameLine();
-    ImGui::Checkbox("Show Image Viewer", &showImgViewer);
 
     static char inputTime[32] = "15", inputShots[32] = "5";
     static bool captureSession = false;
@@ -206,7 +181,7 @@ void CameraManager::picturePart()
                         this->_lastCapture = std::time(0);
                         captureSession = true;
                     } catch (std::exception &error) {
-                        this->_console->warn(error.what());
+                        spdlog::warn(error.what());
                         captureSession = false;
                     }
                 }
@@ -220,7 +195,7 @@ void CameraManager::picturePart()
                         this->takePicture();
                         this->_inputTime = this->_saveInputTime;
                     } catch (std::exception &error) {
-                        this->_console->error(error.what());
+                        spdlog::error(error.what());
                     }
                 }
                 if (this->_inputShots <= 0)
@@ -235,55 +210,41 @@ void CameraManager::picturePart()
             ImGui::TreePop();
         }
     }
-
-    if (showImgViewer) {
-        if (ImGui::TreeNodeEx("Image Viewer", nodeFlags)) {
-            ImPlotAxisFlags flags = ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoGridLines;
-            ImVec2 plotSize = ImGui::GetContentRegionAvail();
-
-            if ((ImPlot::BeginPlot("Preview Image", plotSize, ImPlotFlags_CanvasOnly | ImPlotFlags_Equal)) && this->_imgPreview) {
-                ImPlot::SetupAxes(0, 0, flags, flags);
-
-                ImVec2 canvasSize = ImPlot::GetPlotPos();
-                ImVec2 canvasMax = ImVec2(canvasSize.x + plotSize.x, canvasSize.y + plotSize.y);
-
-                ImPlot::PushPlotClipRect();
-                ImPlot::GetPlotDrawList()->AddRectFilled(canvasSize, canvasMax, IM_COL32_BLACK);
-                ImPlot::PopPlotClipRect();
-
-                ImPlot::PlotImage("Preview Image", this->_imgPreview->getImguiTexture(), ImVec2(0, 0), ImVec2(this->_imgPreview->getImgWidth(), this->_imgPreview->getImgHeight()));
-
-                ImPlot::EndPlot();
-            }
-            ImGui::TreePop();
-        }
-    }
 }
 
-void CameraManager::initFolder()
+void CameraManager::moduleInit()
 {
-    this->_folderPath = this->_settings->getSettingsVar("EX4D_CameraManager_FolderPath");
+    this->_context = gp_context_new();
 
-    if (this->_folderPath != "false") {
-        this->_initFolderPath = true;
-    }
+    gp_context_set_error_func(
+        this->_context, [](GPContext *context, const char *text, void *data) { spdlog::error("GPhoto2 error: {}", text); }, nullptr);
+    gp_context_set_message_func(
+        this->_context, [](GPContext *context, const char *text, void *data) { spdlog::info("GPhoto2 message: {}", text); }, nullptr);
+    gp_context_set_status_func(
+        this->_context, [](GPContext *context, const char *text, void *data) { spdlog::info("GPhoto2 status: {}", text); }, nullptr);
 }
 
-void CameraManager::frameLoop()
+void CameraManager::moduleLoop()
 {
     ImGui::Begin("Camera Manager", &this->state);
 
     ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
     if (ImGui::TreeNodeEx("Set Camera", nodeFlags)) {
-        this->setCamera();
+        this->setupCamera();
         ImGui::TreePop();
     }
 
     ImGui::End();
 }
 
-void CameraManager::saveSettings()
+void CameraManager::moduleClose()
 {
-    this->_settings->setSettingsVar("EX4D_CameraManager_FolderPath", this->_folderPath);
+    if (this->_cameraList)
+        gp_list_free(this->_cameraList);
+    if (this->_portInfoList)
+        gp_port_info_list_free(this->_portInfoList);
+    if (this->_camera)
+        gp_camera_free(this->_camera);
+    gp_context_unref(this->_context);
 }
