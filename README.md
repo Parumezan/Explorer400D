@@ -1,4 +1,9 @@
 # <p align="center">A tool for night photography</p>
+
+**_A major redevelopment is underway to get things right again, by adapting and using fewer restrictive dependencies.
+A lot of things are going to change, but the idea remains the same: to have a good tool for amateur astrophotography with perhaps a vision for professionalism.
+The readme will be updated when the redevelopment has reached a sufficiently advanced status to offer features specific to the first version._**
+
 <img align='left' src='assets/Explorer400D.png' width='300'>
 
 <!-- Status Time -->

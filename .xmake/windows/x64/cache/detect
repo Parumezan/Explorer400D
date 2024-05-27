@@ -1,0 +1,523 @@
+{
+    find_program_fetch_package_system = {
+        cmake = [[C:\Program Files\CMake\bin\cmake]]
+    },
+    find_program_mingw_arch_x86_64_plat_mingw_checktoolld = {
+        ["x86_64-w64-mingw32-g++"] = [[C:\msys64\mingw64\bin\x86_64-w64-mingw32-g++]]
+    },
+    find_package_mingw_x86_64_fetch_package_xmake = {
+        ["xmake::libraw_1e3cd44f439846cdba7eda06987b77b7_release_0.20.2"] = false,
+        ["xmake::imgui_39680ebd8b3346b49ac065fba6972a58_release_docking"] = {
+            links = {
+                "imgui"
+            },
+            static = true,
+            linkdirs = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\lib]]
+            },
+            version = "docking",
+            includedirs = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include\imgui]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include\backends]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include\misc\cpp]]
+            },
+            license = "MIT",
+            libfiles = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\lib\libimgui.a]]
+            },
+            syslinks = "imm32"
+        },
+        ["xmake::glad_532cfdaea9e4486da89fdf8543f96cae_release_v0.1.36"] = {
+            links = {
+                "glad"
+            },
+            linkdirs = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glad\v0.1.36\532cfdaea9e4486da89fdf8543f96cae\lib]]
+            },
+            version = "v0.1.36",
+            includedirs = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glad\v0.1.36\532cfdaea9e4486da89fdf8543f96cae\include]]
+            },
+            static = true,
+            libfiles = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glad\v0.1.36\532cfdaea9e4486da89fdf8543f96cae\lib\libglad.a]]
+            },
+            license = "MIT"
+        },
+        ["xmake::libcurl_10190cd6f6ef4704b35cfb55e51a6312_release_8.7.1"] = false,
+        ["xmake::stb_376c7c0a79434993bcd66389a01b85d8_release_2023.12.15"] = {
+            includedirs = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\s\stb\2023.12.15\376c7c0a79434993bcd66389a01b85d8\include]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\s\stb\2023.12.15\376c7c0a79434993bcd66389a01b85d8\include\stb]]
+            },
+            version = "2023.12.15"
+        },
+        ["xmake::libgphoto2_dbf654cbf0394970a33564d98b8d4ac1_release_latest"] = false,
+        ["xmake::glfw_2b0ee41504834bce92ad7417ca255952_release_3.4"] = {
+            syslinks = "gdi32",
+            includedirs = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\include]]
+            },
+            defines = "GLFW_INCLUDE_NONE",
+            static = true,
+            version = "3.4",
+            linkdirs = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\lib]]
+            },
+            license = "zlib",
+            libfiles = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\lib\libglfw3.a]]
+            },
+            links = {
+                "glfw3"
+            }
+        },
+        ["xmake::spdlog_3310a961d05f4abcab2783611123a0d3_release_v1.14.0"] = {
+            includedirs = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\s\spdlog\v1.14.0\3310a961d05f4abcab2783611123a0d3\include]]
+            },
+            version = "v1.14.0",
+            license = "MIT"
+        },
+        ["xmake::imgui-file-dialog-homemade_eff3019b1c5b4447b1553b8da424ee7d_release_v0.6.7"] = {
+            links = {
+                "imgui-file-dialog"
+            },
+            linkdirs = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui-file-dialog-homemade\v0.6.7\eff3019b1c5b4447b1553b8da424ee7d\lib]]
+            },
+            version = "v0.6.7",
+            includedirs = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui-file-dialog-homemade\v0.6.7\eff3019b1c5b4447b1553b8da424ee7d\include]]
+            },
+            static = true,
+            libfiles = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui-file-dialog-homemade\v0.6.7\eff3019b1c5b4447b1553b8da424ee7d\lib\libimgui-file-dialog.a]]
+            },
+            license = "MIT"
+        },
+        ["xmake::implot-homemade_47d83dbe4b78449482e6eadce2e1366e_release_v0.16"] = {
+            links = {
+                "implot"
+            },
+            linkdirs = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\implot-homemade\v0.16\47d83dbe4b78449482e6eadce2e1366e\lib]]
+            },
+            version = "v0.16",
+            includedirs = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\implot-homemade\v0.16\47d83dbe4b78449482e6eadce2e1366e\include]]
+            },
+            static = true,
+            libfiles = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\implot-homemade\v0.16\47d83dbe4b78449482e6eadce2e1366e\lib\libimplot.a]]
+            },
+            license = "MIT"
+        },
+        ["xmake::nlohmann_json_1db32ac108d247869096721ae8de2af8_release_v3.11.3"] = {
+            includedirs = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\n\nlohmann_json\v3.11.3\1db32ac108d247869096721ae8de2af8\include]]
+            },
+            version = "v3.11.3",
+            license = "MIT"
+        }
+    },
+    ["detect.sdks.find_mingw"] = {
+        mingw = {
+            bindir = [[C:\msys64\mingw64\bin]],
+            cross = "x86_64-w64-mingw32-",
+            sdkdir = "C:/msys64/mingw64"
+        }
+    },
+    ["lib.detect.has_flags"] = {
+        ["mingw_x86_64_C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-g++_14.1.0_cxx_cxflags_-m64_-std=c++20"] = true,
+        ["mingw_x86_64_C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-gcc_14.1.0_cc_cxflags_-m64_-fdiagnostics-color=always"] = true,
+        ["mingw_x86_64_C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-g++_14.1.0_cxx_cxflags_-m64_-DNDEBUG"] = true,
+        ["mingw_x86_64_C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-g++_14.1.0_cxx__-m64_-O3"] = true,
+        ["mingw_x86_64_C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-g++_14.1.0_cxx_cxflags_-m64_-fdiagnostics-color=always"] = true,
+        ["mingw_x86_64_C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-g++_14.1.0_cxx_cxflags_-m64_-MMD -MF"] = true,
+        ["mingw_x86_64_C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-g++_14.1.0_ld_ldflags_-m64 -m64_-fopenmp"] = true,
+        ["mingw_x86_64_C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-g++_14.1.0_cxx_cxflags_-m64_-fvisibility-inlines-hidden"] = true
+    },
+    find_programver_fetch_package_system = {
+        ["C:\\Program Files\\CMake\\bin\\cmake"] = "3.29.2"
+    },
+    find_programver = {
+        ["C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-gcc"] = "14.1.0",
+        ["C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-g++"] = "14.1.0",
+        ["C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\cl.exe"] = "19.39.33523"
+    },
+    find_program_fetch_package_xmake = {
+        python3 = false,
+        python = false,
+        python2 = false,
+        cmake = false
+    },
+    find_program_mingw_arch_x86_64_plat_mingw_checktoolcc = {
+        ["x86_64-w64-mingw32-gcc"] = [[C:\msys64\mingw64\bin\x86_64-w64-mingw32-gcc]]
+    },
+    ["detect.tools.gcc.has_cflags"] = {
+        ["C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-gcc_14.1.0"] = {
+            ["--version"] = true,
+            ["-print-search-dirs"] = true,
+            ["-dumpversion"] = true,
+            ["-Xpreprocessor"] = true,
+            ["-shared"] = true,
+            ["-no-canonical-prefixes"] = true,
+            ["-print-multi-lib"] = true,
+            ["-dumpmachine"] = true,
+            ["-dumpspecs"] = true,
+            ["-Xlinker"] = true,
+            ["-E"] = true,
+            ["-print-multi-directory"] = true,
+            ["-print-sysroot"] = true,
+            ["--help"] = true,
+            ["-time"] = true,
+            ["-Xassembler"] = true,
+            ["-print-multiarch"] = true,
+            ["-print-sysroot-headers-suffix"] = true,
+            ["-print-multi-os-directory"] = true,
+            ["--target-help"] = true,
+            ["-S"] = true,
+            ["-save-temps"] = true,
+            ["-pass-exit-codes"] = true,
+            ["-o"] = true,
+            ["-B"] = true,
+            ["-pipe"] = true,
+            ["-c"] = true,
+            ["-print-libgcc-file-name"] = true,
+            ["-v"] = true,
+            ["--param"] = true,
+            ["-x"] = true,
+            ["-pie"] = true
+        },
+        ["C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-g++_14.1.0"] = {
+            ["--version"] = true,
+            ["-print-search-dirs"] = true,
+            ["-dumpversion"] = true,
+            ["-Xpreprocessor"] = true,
+            ["-shared"] = true,
+            ["-no-canonical-prefixes"] = true,
+            ["-print-multi-lib"] = true,
+            ["-dumpmachine"] = true,
+            ["-dumpspecs"] = true,
+            ["-Xlinker"] = true,
+            ["-E"] = true,
+            ["-print-multi-directory"] = true,
+            ["-print-sysroot"] = true,
+            ["--help"] = true,
+            ["-time"] = true,
+            ["-Xassembler"] = true,
+            ["-print-multiarch"] = true,
+            ["-print-sysroot-headers-suffix"] = true,
+            ["-print-multi-os-directory"] = true,
+            ["--target-help"] = true,
+            ["-S"] = true,
+            ["-save-temps"] = true,
+            ["-pass-exit-codes"] = true,
+            ["-o"] = true,
+            ["-B"] = true,
+            ["-pipe"] = true,
+            ["-c"] = true,
+            ["-print-libgcc-file-name"] = true,
+            ["-v"] = true,
+            ["--param"] = true,
+            ["-x"] = true,
+            ["-pie"] = true
+        }
+    },
+    ["detect.sdks.find_vcpkgdir"] = false,
+    find_program = {
+        ["cl.exe"] = [[C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\bin\HostX64\x64\cl.exe]],
+        ["pkg-config"] = "pkg-config",
+        tar = "tar",
+        pacman = "pacman",
+        unzip = false,
+        git = "git",
+        ["C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-g++"] = [[C:\msys64\mingw64\bin\x86_64-w64-mingw32-g++]],
+        ["C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-gcc"] = [[C:\msys64\mingw64\bin\x86_64-w64-mingw32-gcc]],
+        ["7z"] = "7z",
+        ping = "ping",
+        gzip = "gzip",
+        emerge = false
+    },
+    ["detect.tools.gcc.has_ldflags"] = {
+        ["C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-g++_14.1.0"] = {
+            ["--out-implib"] = true,
+            ["--auxiliary"] = true,
+            ["-L"] = true,
+            ["--no-print-gc-sections"] = true,
+            ["-g"] = true,
+            ["--force-exe-suffix"] = true,
+            ["--gc-keep-exported"] = true,
+            ["--enable-stdcall-fixup"] = true,
+            ["--verbose"] = true,
+            ["--no-whole-archive"] = true,
+            ["--no-warn-rwx-segments"] = true,
+            ["-flto"] = true,
+            ["--enable-runtime-pseudo-reloc"] = true,
+            ["-EL"] = true,
+            ["--architecture"] = true,
+            ["-static"] = true,
+            ["--add-stdcall-alias"] = true,
+            ["--version-script"] = true,
+            ["--allow-multiple-definition"] = true,
+            ["--mri-script"] = true,
+            ["-G"] = true,
+            ["--library"] = true,
+            ["--version-exports-section"] = true,
+            ["--minor-image-version"] = true,
+            ["--emit-relocs"] = true,
+            ["-Ur"] = true,
+            ["--dependency-file"] = true,
+            ["-u"] = true,
+            ["--default-image-base-high"] = true,
+            ["--spare-dynamic-tags"] = true,
+            ["--no-strip-discarded"] = true,
+            ["--no-undefined-version"] = true,
+            ["--sort-common"] = true,
+            ["-T"] = true,
+            ["--disable-large-address-aware"] = true,
+            ["--enable-long-section-names"] = true,
+            ["--no-warn-mismatch"] = true,
+            ["--no-gc-sections"] = true,
+            ["--cref"] = true,
+            ["--target-help"] = true,
+            ["-a"] = true,
+            ["--ctf-variables"] = true,
+            ["--enable-auto-image-base"] = true,
+            ["-debug"] = true,
+            ["--discard-none"] = true,
+            ["-c"] = true,
+            ["--no-define-common"] = true,
+            ["-O"] = true,
+            ["--print-map-locals"] = true,
+            ["-Bsymbolic-functions"] = true,
+            ["--minor-subsystem-version"] = true,
+            ["-Tldata-segment"] = true,
+            ["-F"] = true,
+            ["--major-subsystem-version"] = true,
+            ["--no-fatal-warnings"] = true,
+            ["--no-map-whole-files"] = true,
+            ["--kill-at"] = true,
+            ["--error-handling-script"] = true,
+            ["--relocatable"] = true,
+            ["--strip-discarded"] = true,
+            ["--large-address-aware"] = true,
+            ["--file-alignment"] = true,
+            ["--split-by-reloc"] = true,
+            ["-e"] = true,
+            ["--no-print-map-locals"] = true,
+            ["-Y"] = true,
+            ["--discard-all"] = true,
+            ["--entry"] = true,
+            ["-EB"] = true,
+            ["--omagic"] = true,
+            ["--undefined-version"] = true,
+            ["--as-needed"] = true,
+            ["--map-whole-files"] = true,
+            ["-Bsymbolic"] = true,
+            ["--no-accept-unknown-input-arch"] = true,
+            ["--remap-inputs"] = true,
+            ["--no-export-dynamic"] = true,
+            ["-Bshareable"] = true,
+            ["-f"] = true,
+            ["-A"] = true,
+            ["--exclude-modules-for-implib"] = true,
+            ["--script"] = true,
+            ["-rpath-link"] = true,
+            ["-init"] = true,
+            ["--split-by-file"] = true,
+            ["--default-imported-symver"] = true,
+            ["--gpsize"] = true,
+            ["--discard-locals"] = true,
+            ["--disable-linker-version"] = true,
+            ["--defsym"] = true,
+            ["-V"] = true,
+            ["-Ttext"] = true,
+            ["--just-symbols"] = true,
+            ["--nmagic"] = true,
+            ["--disable-runtime-pseudo-reloc"] = true,
+            ["--force-group-allocation"] = true,
+            ["--unique"] = true,
+            ["--default-symver"] = true,
+            ["--no-copy-dt-needed-entries"] = true,
+            ["--require-defined"] = true,
+            ["-nostdlib"] = true,
+            ["-I"] = true,
+            ["--version"] = true,
+            ["--default-script"] = true,
+            ["--section-alignment"] = true,
+            ["--trace"] = true,
+            ["--retain-symbols-file"] = true,
+            ["--reduce-memory-overheads"] = true,
+            ["--warn-unresolved-symbols"] = true,
+            ["-qmagic"] = true,
+            ["--print-map"] = true,
+            ["--no-as-needed"] = true,
+            ["-plugin-opt"] = true,
+            ["--print-map-discarded"] = true,
+            ["--no-keep-memory"] = true,
+            ["--warn-common"] = true,
+            ["--pop-state"] = true,
+            ["--no-print-map-discarded"] = true,
+            ["--enable-linker-version"] = true,
+            ["--whole-archive"] = true,
+            ["-fini"] = true,
+            ["--ignore-unresolved-symbol"] = true,
+            ["--no-warn-search-mismatch"] = true,
+            ["--enable-non-contiguous-regions-warnings"] = true,
+            ["--wrap"] = true,
+            ["--no-dynamic-linker"] = true,
+            ["--print-gc-sections"] = true,
+            ["-o"] = true,
+            ["--disable-stdcall-fixup"] = true,
+            ["--error-unresolved-symbols"] = true,
+            ["--gc-sections"] = true,
+            ["--accept-unknown-input-arch"] = true,
+            ["--warn-once"] = true,
+            ["-y"] = true,
+            ["--stack"] = true,
+            ["--export-dynamic-symbol"] = true,
+            ["--dynamic-list"] = true,
+            ["--output"] = true,
+            ["--no-check-sections"] = true,
+            ["--disable-long-section-names"] = true,
+            ["--no-omagic"] = true,
+            ["--exclude-libs"] = true,
+            ["--strip-debug"] = true,
+            ["--export-all-symbols"] = true,
+            ["-h"] = true,
+            ["--dynamic-list-data"] = true,
+            ["--copy-dt-needed-entries"] = true,
+            ["--library-path"] = true,
+            ["--help"] = true,
+            ["--strip-all"] = true,
+            ["--stats"] = true,
+            ["--filter"] = true,
+            ["--print-sysroot"] = true,
+            ["--warn-alternate-em"] = true,
+            ["-Qy"] = true,
+            ["-l"] = true,
+            ["--enable-non-contiguous-regions"] = true,
+            ["--no-relax"] = true,
+            ["--demangle"] = true,
+            ["--allow-shlib-undefined"] = true,
+            ["--relax"] = true,
+            ["--no-undefined"] = true,
+            ["--major-os-version"] = true,
+            ["--export-dynamic"] = true,
+            ["-dT"] = true,
+            ["--pic-executable"] = true,
+            ["-assert"] = true,
+            ["-Tbss"] = true,
+            ["--no-ctf-variables"] = true,
+            ["--end-group"] = true,
+            ["--sort-section"] = true,
+            ["--warn-textrel"] = true,
+            ["--traditional-format"] = true,
+            ["--exclude-symbols"] = true,
+            ["-rpath"] = true,
+            ["-no-pie"] = true,
+            ["-Tdata"] = true,
+            ["-Ttext-segment"] = true,
+            ["-m"] = true,
+            ["--disable-reloc-section"] = true,
+            ["--task-link"] = true,
+            ["--dynamic-list-cpp-typeinfo"] = true,
+            ["--trace-symbol"] = true,
+            ["--warn-section-align"] = true,
+            ["--print-output-format"] = true,
+            ["--image-base"] = true,
+            ["--export-dynamic-symbol-list"] = true,
+            ["--dynamic-list-cpp-new"] = true,
+            ["-soname"] = true,
+            ["--subsystem"] = true,
+            ["-Trodata-segment"] = true,
+            ["--fatal-warnings"] = true,
+            ["--remap-inputs-file"] = true,
+            ["--oformat"] = true,
+            ["--disable-auto-import"] = true,
+            ["--warn-duplicate-exports"] = true,
+            ["--exclude-all-symbols"] = true,
+            ["--orphan-handling"] = true,
+            ["--print-memory-usage"] = true,
+            ["-b"] = true,
+            ["--section-start"] = true,
+            ["--disable-multiple-abs-defs"] = true,
+            ["--support-old-code"] = true,
+            ["--format"] = true,
+            ["--enable-extra-pe-debug"] = true,
+            ["--compat-implib"] = true,
+            ["--start-group"] = true,
+            ["--default-image-base-low"] = true,
+            ["--enable-reloc-section"] = true,
+            ["--disable-auto-image-base"] = true,
+            ["--warn-multiple-gp"] = true,
+            ["-Bno-symbolic"] = true,
+            ["--major-image-version"] = true,
+            ["--enable-extra-pep-debug"] = true,
+            ["-plugin"] = true,
+            ["--output-def"] = true,
+            ["--dll"] = true,
+            ["--no-allow-shlib-undefined"] = true,
+            ["--enable-auto-import"] = true,
+            ["-R"] = true,
+            ["--no-warnings"] = true,
+            ["--dynamic-linker"] = true,
+            ["--undefined"] = true,
+            ["-dp"] = true,
+            ["--no-demangle"] = true,
+            ["--push-state"] = true,
+            ["--check-sections"] = true,
+            ["--minor-os-version"] = true,
+            ["-Map"] = true,
+            ["--heap"] = true
+        }
+    },
+    find_package_mingw_x86_64_fetch_package_system = {
+        libgphoto2_dbf654cbf0394970a33564d98b8d4ac1_release = {
+            includedirs = {
+                "C:/msys64/mingw64/include/gphoto2"
+            },
+            links = {
+                "gphoto2",
+                "gphoto2_port",
+                "m"
+            },
+            version = "2.5.31"
+        },
+        libraw_1e3cd44f439846cdba7eda06987b77b7_release = {
+            version = "0.21.2",
+            includedirs = {
+                "C:/msys64/mingw64/include/libraw"
+            },
+            ldflags = {
+                "-fopenmp"
+            },
+            links = {
+                "raw",
+                "lcms2",
+                "lcms2_fast_float"
+            },
+            shflags = {
+                "-fopenmp"
+            }
+        },
+        ["pacman::curl_10190cd6f6ef4704b35cfb55e51a6312_release"] = {
+            includedirs = {
+                "C:/msys64/mingw64/bin/../include"
+            },
+            linkdirs = {
+                "C:/msys64/mingw64/bin/../lib"
+            },
+            links = {
+                "curl"
+            },
+            version = "8.7.1"
+        }
+    },
+    find_program_mingw_arch_x86_64_plat_mingw_checktoolcxx = {
+        ["x86_64-w64-mingw32-g++"] = [[C:\msys64\mingw64\bin\x86_64-w64-mingw32-g++]]
+    }
+}

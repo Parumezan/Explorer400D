@@ -1,0 +1,14 @@
+{
+    packages = {
+        [[C:\Users\jbbro\AppData\Local\.xmake\packages\o\opengl\latest\dbf654cbf0394970a33564d98b8d4ac1]],
+        [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952]],
+        [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58]],
+        [[C:\Users\jbbro\AppData\Local\.xmake\packages\p\python\3.11.8\c78c5a743ed7468ba683cd8a5ff50255]],
+        [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glad\v0.1.36\532cfdaea9e4486da89fdf8543f96cae]],
+        [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\implot-homemade\v0.16\47d83dbe4b78449482e6eadce2e1366e]],
+        [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui-file-dialog-homemade\v0.6.7\eff3019b1c5b4447b1553b8da424ee7d]],
+        [[C:\Users\jbbro\AppData\Local\.xmake\packages\s\stb\2023.12.15\376c7c0a79434993bcd66389a01b85d8]],
+        [[C:\Users\jbbro\AppData\Local\.xmake\packages\s\spdlog\v1.14.0\3310a961d05f4abcab2783611123a0d3]],
+        [[C:\Users\jbbro\AppData\Local\.xmake\packages\n\nlohmann_json\v3.11.3\1db32ac108d247869096721ae8de2af8]]
+    }
+}

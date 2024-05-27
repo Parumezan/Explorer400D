@@ -1,0 +1,300 @@
+{
+    glfw = {
+        envs = {
+            PATH = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\c\cmake\3.29.2\3fae25d52b0e4efeb85d002af641b2f4\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\o\opengl\latest\dbf654cbf0394970a33564d98b8d4ac1\bin]]
+            }
+        },
+        links = {
+            "glfw3",
+            "opengl32"
+        },
+        includedirs = [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\include]],
+        defines = "GLFW_INCLUDE_NONE",
+        libfiles = [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\lib\libglfw3.a]],
+        __requirestr = "glfw",
+        linkdirs = [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\lib]],
+        __requireconfs = {
+            system = false
+        },
+        installdir = [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952]],
+        license = "zlib",
+        static = true,
+        version = "3.4",
+        __enabled = true,
+        syslinks = "gdi32"
+    },
+    ["implot-homemade"] = {
+        envs = {
+            PATH = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\implot-homemade\v0.16\47d83dbe4b78449482e6eadce2e1366e\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\c\cmake\3.29.2\3fae25d52b0e4efeb85d002af641b2f4\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\o\opengl\latest\dbf654cbf0394970a33564d98b8d4ac1\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\bin]]
+            }
+        },
+        version = "v0.16",
+        includedirs = {
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\implot-homemade\v0.16\47d83dbe4b78449482e6eadce2e1366e\include]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include\imgui]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include\backends]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include\misc\cpp]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\include]]
+        },
+        defines = "GLFW_INCLUDE_NONE",
+        libfiles = {
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\implot-homemade\v0.16\47d83dbe4b78449482e6eadce2e1366e\lib\libimplot.a]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\lib\libimgui.a]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\lib\libglfw3.a]]
+        },
+        __requirestr = "implot-homemade",
+        links = {
+            "implot",
+            "imgui",
+            "glfw3",
+            "opengl32"
+        },
+        __requireconfs = {
+            system = false
+        },
+        installdir = [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\implot-homemade\v0.16\47d83dbe4b78449482e6eadce2e1366e]],
+        license = "MIT",
+        static = true,
+        syslinks = {
+            "imm32",
+            "gdi32"
+        },
+        __enabled = true,
+        linkdirs = {
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\implot-homemade\v0.16\47d83dbe4b78449482e6eadce2e1366e\lib]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\lib]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\lib]]
+        }
+    },
+    libgphoto2 = {
+        envs = {
+            PATH = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\l\libgphoto2\latest\dbf654cbf0394970a33564d98b8d4ac1\bin]]
+            }
+        },
+        version = "2.5.31",
+        includedirs = "C:/msys64/mingw64/include/gphoto2",
+        __enabled = true,
+        links = {
+            "gphoto2",
+            "gphoto2_port",
+            "m"
+        },
+        __requirestr = "libgphoto2"
+    },
+    libcurl = {
+        includedirs = "C:/msys64/mingw64/bin/../include",
+        linkdirs = "C:/msys64/mingw64/bin/../lib",
+        version = "8.7.1",
+        __enabled = true,
+        envs = {
+            PATH = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\l\libcurl\8.7.1\10190cd6f6ef4704b35cfb55e51a6312\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\c\cmake\3.29.2\3fae25d52b0e4efeb85d002af641b2f4\bin]]
+            }
+        },
+        links = "curl",
+        __requirestr = "libcurl"
+    },
+    glad = {
+        linkdirs = [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glad\v0.1.36\532cfdaea9e4486da89fdf8543f96cae\lib]],
+        includedirs = [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glad\v0.1.36\532cfdaea9e4486da89fdf8543f96cae\include]],
+        libfiles = [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glad\v0.1.36\532cfdaea9e4486da89fdf8543f96cae\lib\libglad.a]],
+        __requirestr = "glad",
+        version = "v0.1.36",
+        __requireconfs = {
+            system = false
+        },
+        installdir = [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glad\v0.1.36\532cfdaea9e4486da89fdf8543f96cae]],
+        license = "MIT",
+        links = "glad",
+        static = true,
+        envs = {
+            PATH = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glad\v0.1.36\532cfdaea9e4486da89fdf8543f96cae\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\c\cmake\3.29.2\3fae25d52b0e4efeb85d002af641b2f4\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\p\python\3.11.8\c78c5a743ed7468ba683cd8a5ff50255\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\p\python\3.11.8\c78c5a743ed7468ba683cd8a5ff50255\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\p\python\3.11.8\c78c5a743ed7468ba683cd8a5ff50255\Scripts]]
+            },
+            PYTHONPATH = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\p\python\3.11.8\c78c5a743ed7468ba683cd8a5ff50255\Lib\site-packages]]
+            }
+        },
+        __enabled = true
+    },
+    imgui = {
+        envs = {
+            PATH = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\c\cmake\3.29.2\3fae25d52b0e4efeb85d002af641b2f4\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\o\opengl\latest\dbf654cbf0394970a33564d98b8d4ac1\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\bin]]
+            }
+        },
+        syslinks = {
+            "imm32",
+            "gdi32"
+        },
+        includedirs = {
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include\imgui]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include\backends]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include\misc\cpp]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\include]]
+        },
+        defines = "GLFW_INCLUDE_NONE",
+        libfiles = {
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\lib\libimgui.a]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\lib\libglfw3.a]]
+        },
+        __requirestr = "imgui docking",
+        license = "MIT",
+        __requireconfs = {
+            system = false,
+            configs = {
+                glfw = true,
+                opengl3 = true
+            }
+        },
+        installdir = [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58]],
+        version = "docking",
+        static = true,
+        links = {
+            "imgui",
+            "glfw3",
+            "opengl32"
+        },
+        __enabled = true,
+        linkdirs = {
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\lib]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\lib]]
+        }
+    },
+    stb = {
+        __requireconfs = {
+            system = false
+        },
+        installdir = [[C:\Users\jbbro\AppData\Local\.xmake\packages\s\stb\2023.12.15\376c7c0a79434993bcd66389a01b85d8]],
+        version = "2023.12.15",
+        includedirs = {
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\s\stb\2023.12.15\376c7c0a79434993bcd66389a01b85d8\include]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\s\stb\2023.12.15\376c7c0a79434993bcd66389a01b85d8\include\stb]]
+        },
+        __enabled = true,
+        envs = {
+            PATH = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\s\stb\2023.12.15\376c7c0a79434993bcd66389a01b85d8\bin]]
+            }
+        },
+        __requirestr = "stb"
+    },
+    nlohmann_json = {
+        includedirs = [[C:\Users\jbbro\AppData\Local\.xmake\packages\n\nlohmann_json\v3.11.3\1db32ac108d247869096721ae8de2af8\include]],
+        __requireconfs = {
+            system = false
+        },
+        installdir = [[C:\Users\jbbro\AppData\Local\.xmake\packages\n\nlohmann_json\v3.11.3\1db32ac108d247869096721ae8de2af8]],
+        license = "MIT",
+        __enabled = true,
+        version = "v3.11.3",
+        envs = {
+            PATH = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\n\nlohmann_json\v3.11.3\1db32ac108d247869096721ae8de2af8\bin]]
+            }
+        },
+        __requirestr = "nlohmann_json"
+    },
+    spdlog = {
+        includedirs = [[C:\Users\jbbro\AppData\Local\.xmake\packages\s\spdlog\v1.14.0\3310a961d05f4abcab2783611123a0d3\include]],
+        __requireconfs = {
+            system = false
+        },
+        installdir = [[C:\Users\jbbro\AppData\Local\.xmake\packages\s\spdlog\v1.14.0\3310a961d05f4abcab2783611123a0d3]],
+        license = "MIT",
+        __enabled = true,
+        version = "v1.14.0",
+        envs = {
+            PATH = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\s\spdlog\v1.14.0\3310a961d05f4abcab2783611123a0d3\bin]]
+            }
+        },
+        __requirestr = "spdlog"
+    },
+    ["imgui-file-dialog-homemade"] = {
+        envs = {
+            PATH = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui-file-dialog-homemade\v0.6.7\eff3019b1c5b4447b1553b8da424ee7d\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\c\cmake\3.29.2\3fae25d52b0e4efeb85d002af641b2f4\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\o\opengl\latest\dbf654cbf0394970a33564d98b8d4ac1\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\bin]],
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\bin]]
+            }
+        },
+        version = "v0.6.7",
+        includedirs = {
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui-file-dialog-homemade\v0.6.7\eff3019b1c5b4447b1553b8da424ee7d\include]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include\imgui]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include\backends]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\include\misc\cpp]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\include]]
+        },
+        defines = "GLFW_INCLUDE_NONE",
+        libfiles = {
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui-file-dialog-homemade\v0.6.7\eff3019b1c5b4447b1553b8da424ee7d\lib\libimgui-file-dialog.a]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\lib\libimgui.a]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\lib\libglfw3.a]]
+        },
+        __requirestr = "imgui-file-dialog-homemade",
+        links = {
+            "imgui-file-dialog",
+            "imgui",
+            "glfw3",
+            "opengl32"
+        },
+        __requireconfs = {
+            system = false
+        },
+        installdir = [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui-file-dialog-homemade\v0.6.7\eff3019b1c5b4447b1553b8da424ee7d]],
+        license = "MIT",
+        static = true,
+        syslinks = {
+            "imm32",
+            "gdi32"
+        },
+        __enabled = true,
+        linkdirs = {
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui-file-dialog-homemade\v0.6.7\eff3019b1c5b4447b1553b8da424ee7d\lib]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\i\imgui\docking\39680ebd8b3346b49ac065fba6972a58\lib]],
+            [[C:\Users\jbbro\AppData\Local\.xmake\packages\g\glfw\3.4\2b0ee41504834bce92ad7417ca255952\lib]]
+        }
+    },
+    libraw = {
+        includedirs = "C:/msys64/mingw64/include/libraw",
+        ldflags = "-fopenmp",
+        envs = {
+            PATH = {
+                [[C:\Users\jbbro\AppData\Local\.xmake\packages\l\libraw\0.20.2\1e3cd44f439846cdba7eda06987b77b7\bin]]
+            }
+        },
+        version = "0.21.2",
+        __enabled = true,
+        shflags = "-fopenmp",
+        links = {
+            "raw",
+            "lcms2",
+            "lcms2_fast_float"
+        },
+        __requirestr = "libraw"
+    }
+}
