@@ -20,6 +20,12 @@ namespace Explorer400D
             Console _console;
             CameraManager _cameraManager;
 
+            std::atomic<bool> _stopSignal = false;
+            std::atomic<bool> _threadRunning = false;
+            std::atomic<ThreadState> _threadState = ThreadState::INIT;
+            std::thread _moduleThread;
+            std::atomic<size_t> _moduleIndex = 0;
+
             void _screenRender();
             void _screenInit();
             void _screenLoop();

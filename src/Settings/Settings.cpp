@@ -55,6 +55,8 @@ void Settings::moduleLoadSettings()
 {
     nlohmann::json obj = nullptr;
 
+    (obj = this->getSetting("Explorer400D::Console::State")) != nullptr ? this->state = obj.get<bool>() : this->state = false;
+
     (obj = this->getSetting("ImPlot::UseLocalTime")) != nullptr ? ImPlot::GetStyle().UseLocalTime = obj.get<bool>() : ImPlot::GetStyle().UseLocalTime = false;
     (obj = this->getSetting("ImPlot::UseISO8601")) != nullptr ? ImPlot::GetStyle().UseISO8601 = obj.get<bool>() : ImPlot::GetStyle().UseISO8601 = false;
     (obj = this->getSetting("ImPlot::Use24HourClock")) != nullptr ? ImPlot::GetStyle().Use24HourClock = obj.get<bool>() : ImPlot::GetStyle().Use24HourClock = false;
@@ -62,6 +64,8 @@ void Settings::moduleLoadSettings()
 
 void Settings::moduleSaveSettings()
 {
+    this->setSetting("Explorer400D::Console::State", this->state);
+
     this->setSetting("ImPlot::UseLocalTime", ImPlot::GetStyle().UseLocalTime);
     this->setSetting("ImPlot::UseISO8601", ImPlot::GetStyle().UseISO8601);
     this->setSetting("ImPlot::Use24HourClock", ImPlot::GetStyle().Use24HourClock);

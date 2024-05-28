@@ -4,7 +4,7 @@ using namespace Explorer400D;
 
 extern bool stopSignal;
 
-Screen::Screen()
+Screen::Screen() : _console(this->_settings), _cameraManager(this->_settings)
 {
     if (!glfwInit())
         throw std::runtime_error("Failed to initialize GLFW");
@@ -43,16 +43,12 @@ Screen::Screen()
     this->_modules.push_back(&this->_console);
     this->_modules.push_back(&this->_cameraManager);
 
-    // Load the settings
-
     // Start the screen loop
     this->_screenRender();
 }
 
 Screen::~Screen()
 {
-    // Save the settings
-
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -107,18 +103,51 @@ void Screen::_screenRender()
 
 void Screen::_screenInit()
 {
-    spdlog::info("Initializing modules..");
+    if (!this->_threadRunning.load()) {
+        this->_moduleThread = std::thread([this]() {
+            this->_threadRunning.store(true);
+            spdlog::info("Initializing modules..");
 
-    for (auto &module : this->_modules)
-        module->moduleInit();
+            this->_threadState.store(ThreadState::INIT);
+            for (this->_moduleIndex.store(0); this->_moduleIndex.load() < this->_modules.size(); this->_moduleIndex++)
+                this->_modules[this->_moduleIndex]->moduleInit();
 
-    spdlog::info("Loading settings..");
+            spdlog::info("Loading settings..");
 
-    for (auto &module : this->_modules)
-        module->moduleLoadSettings();
+            this->_threadState.store(ThreadState::SAVE);
+            for (this->_moduleIndex.store(0); this->_moduleIndex.load() < this->_modules.size(); this->_moduleIndex++)
+                this->_modules[this->_moduleIndex]->moduleLoadSettings();
 
-    spdlog::info("Modules initialized");
-    this->_state = ApplicationState::RUNNING;
+            spdlog::info("Modules initialized");
+
+            this->_stopSignal.store(true);
+        });
+    }
+
+    if (this->_stopSignal.load()) {
+        this->_moduleThread.join();
+        this->_threadRunning.store(false);
+        this->_stopSignal.store(false);
+        this->_state = ApplicationState::RUNNING;
+    }
+
+    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+    ImGui::Begin("Loading Window", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoSavedSettings);
+
+    switch (this->_threadState.load()) {
+    case ThreadState::INIT:
+        ImGui::Text("Initializing modules..");
+        ImGui::ProgressBar((float)this->_moduleIndex.load() / this->_modules.size());
+        break;
+    case ThreadState::SAVE:
+        ImGui::Text("Loading settings..");
+        ImGui::ProgressBar((float)this->_moduleIndex.load() / this->_modules.size());
+        break;
+    }
+
+    ImGui::End();
 }
 
 void Screen::_screenLoop()
@@ -158,18 +187,49 @@ void Screen::_screenLoop()
 
 void Screen::_screenClose()
 {
+    if (!this->_threadRunning.load()) {
+        this->_moduleThread = std::thread([this]() {
+            this->_threadRunning.store(true);
+            spdlog::info("Saving settings..");
 
-    spdlog::info("Saving settings..");
+            this->_threadState.store(ThreadState::SAVE);
+            for (this->_moduleIndex.store(0); this->_moduleIndex.load() < this->_modules.size(); this->_moduleIndex++)
+                this->_modules[this->_moduleIndex]->moduleSaveSettings();
 
-    for (auto &module : this->_modules)
-        module->moduleSaveSettings();
+            spdlog::info("Closing modules..");
 
-    spdlog::info("Closing modules..");
+            this->_threadState.store(ThreadState::INIT);
+            for (this->_moduleIndex.store(0); this->_moduleIndex.load() < this->_modules.size(); this->_moduleIndex++)
+                this->_modules[this->_moduleIndex]->moduleClose();
 
-    for (auto &module : this->_modules)
-        module->moduleClose();
+            spdlog::info("Modules closed");
 
-    spdlog::info("Modules closed");
+            this->_stopSignal.store(true);
+        });
+    }
 
-    this->_state = ApplicationState::STOPPED;
+    if (this->_stopSignal.load()) {
+        this->_moduleThread.join();
+        this->_threadRunning.store(false);
+        this->_stopSignal.store(false);
+        this->_state = ApplicationState::STOPPED;
+    }
+
+    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+    ImGui::Begin("Closing Window", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoSavedSettings);
+
+    switch (this->_threadState.load()) {
+    case ThreadState::INIT:
+        ImGui::Text("Closing modules..");
+        ImGui::ProgressBar((float)this->_moduleIndex.load() / this->_modules.size());
+        break;
+    case ThreadState::SAVE:
+        ImGui::Text("Saving settings..");
+        ImGui::ProgressBar((float)this->_moduleIndex.load() / this->_modules.size());
+        break;
+    }
+
+    ImGui::End();
 }

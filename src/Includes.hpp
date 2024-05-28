@@ -50,6 +50,11 @@ namespace Explorer400D
         STOPPED
     };
 
+    enum class ThreadState {
+        INIT,
+        SAVE
+    };
+
     static const std::vector<std::string> ImgTypeRaw = {"arw", "cr2", "cr3", "dng", "nef", "nrw", "orf", "pef", "raf", "rw2", "srw"};
     static const std::vector<std::string> ImgTypeStb = {"jpg", "jpeg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic"};
 } // namespace Explorer400D

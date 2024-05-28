@@ -2,8 +2,10 @@
 
 using namespace Explorer400D;
 
-CameraManager::CameraManager()
+CameraManager::CameraManager(Settings &settings)
 {
+    this->_settings = &settings;
+
     this->_context = nullptr;
     this->_cameraList = nullptr;
     this->_camera = nullptr;
@@ -247,4 +249,16 @@ void CameraManager::moduleClose()
     if (this->_camera)
         gp_camera_free(this->_camera);
     gp_context_unref(this->_context);
+}
+
+void CameraManager::moduleLoadSettings()
+{
+    nlohmann::json obj = nullptr;
+
+    (obj = this->_settings->getSetting("Explorer400D::CameraManager::State")) != nullptr ? this->state = obj.get<bool>() : this->state = false;
+}
+
+void CameraManager::moduleSaveSettings()
+{
+    this->_settings->setSetting("Explorer400D::CameraManager::State", this->state);
 }

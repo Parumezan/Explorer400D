@@ -3,12 +3,15 @@
 
 #include "Includes.hpp"
 #include "Module/Module.hpp"
+#include "Settings/Settings.hpp"
 
 namespace Explorer400D
 {
     class CameraManager : public Module
     {
         private:
+            Settings *_settings;
+
             GPContext *_context;
             CameraList *_cameraList;
             Camera *_camera;
@@ -27,7 +30,7 @@ namespace Explorer400D
             std::time_t _lastCapture;
 
         public:
-            CameraManager();
+            CameraManager(Settings &settings);
             ~CameraManager() = default;
 
             void listConnectedCameras();
@@ -41,6 +44,9 @@ namespace Explorer400D
             void moduleInit() override;
             void moduleLoop() override;
             void moduleClose() override;
+
+            void moduleLoadSettings() override;
+            void moduleSaveSettings() override;
     };
 } // namespace Explorer400D
 
