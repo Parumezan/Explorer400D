@@ -23,8 +23,8 @@ namespace Explorer400D
             void moduleLoop() override;
             void moduleClose() override;
 
-            void moduleLoadSettings() override;
-            void moduleSaveSettings() override;
+            void moduleSettingsLoad() override;
+            void moduleSettingsSave() override;
     };
 } // namespace Explorer400D
 

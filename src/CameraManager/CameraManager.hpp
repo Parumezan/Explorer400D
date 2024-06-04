@@ -18,11 +18,14 @@ namespace Explorer400D
             GPPortInfoList *_portInfoList;
 
             size_t _numCameras;
+            bool _isCameraSelected;
             std::string _selectedCameraName;
             std::string _selectedCameraPort;
             std::string _cameraSummary;
 
             std::string _folderPath;
+            bool _folderDialog;
+            bool _initFolderPath;
 
             int _inputTime;
             int _inputShots;
@@ -35,6 +38,7 @@ namespace Explorer400D
 
             void listConnectedCameras();
             void connectCamera();
+            void disconnectCamera();
             void takePicture();
 
             void setupCamera();
@@ -45,8 +49,8 @@ namespace Explorer400D
             void moduleLoop() override;
             void moduleClose() override;
 
-            void moduleLoadSettings() override;
-            void moduleSaveSettings() override;
+            void moduleSettingsLoad() override;
+            void moduleSettingsSave() override;
     };
 } // namespace Explorer400D
 

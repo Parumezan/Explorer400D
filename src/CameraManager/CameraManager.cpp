@@ -11,11 +11,12 @@ CameraManager::CameraManager(Settings &settings)
     this->_camera = nullptr;
     this->_portInfoList = nullptr;
 
+    this->_isCameraSelected = false;
     this->_selectedCameraName = "Select a Camera";
     this->_selectedCameraPort = "";
     this->_cameraSummary = "";
 
-    this->_folderPath = "C:\\Users\\jbbro\\Pictures\\Camera\\Test";
+    this->_folderPath = "";
 
     this->_lastCapture = 0;
     this->_inputShots = 0;
@@ -39,6 +40,11 @@ void CameraManager::listConnectedCameras()
 
 void CameraManager::connectCamera()
 {
+    if (!this->_isCameraSelected) {
+        spdlog::warn("No camera selected");
+        return;
+    }
+
     if (this->_camera)
         gp_camera_free(this->_camera);
     gp_camera_new(&this->_camera);
@@ -60,6 +66,31 @@ void CameraManager::connectCamera()
     }
 
     spdlog::info("Connected to {} on port {}", this->_selectedCameraName, portNumber);
+}
+
+void CameraManager::disconnectCamera()
+{
+    if (this->_camera) {
+        gp_camera_exit(this->_camera, this->_context);
+        gp_camera_free(this->_camera);
+
+        this->_camera = nullptr;
+        this->_cameraSummary.clear();
+        this->_isCameraSelected = false;
+
+        spdlog::info("Disconnected from {}", this->_selectedCameraName);
+
+        this->_selectedCameraName = "Select a Camera";
+        this->_selectedCameraPort = "";
+
+        if (this->_cameraList)
+            gp_list_free(this->_cameraList);
+        if (this->_portInfoList)
+            gp_port_info_list_free(this->_portInfoList);
+
+        this->_cameraList = nullptr;
+        this->_portInfoList = nullptr;
+    }
 }
 
 void CameraManager::takePicture()
@@ -97,6 +128,7 @@ void CameraManager::setupCamera()
                 if (ImGui::Selectable(cameraName, isSelected)) {
                     this->_selectedCameraName = cameraName;
                     this->_selectedCameraPort = cameraPort;
+                    this->_isCameraSelected = true;
                 }
 
                 if (this->_selectedCameraName == cameraName)
@@ -108,22 +140,18 @@ void CameraManager::setupCamera()
 
     ImGui::SameLine();
     if (ImGui::Button("Auto Detect"))
-        this->listConnectedCameras();
+        this->moduleThreadInit(std::bind(&CameraManager::listConnectedCameras, this));
 
     ImGui::SameLine();
     if (ImGui::Button("Connect"))
-        this->connectCamera();
+        this->moduleThreadInit(std::bind(&CameraManager::connectCamera, this));
 
     if (this->_camera == nullptr)
         return;
 
     ImGui::SameLine();
-    if (ImGui::Button("Disconnect")) {
-        gp_camera_exit(this->_camera, this->_context);
-        gp_camera_free(this->_camera);
-        this->_camera = nullptr;
-        this->_cameraSummary.clear();
-    }
+    if (ImGui::Button("Disconnect"))
+        this->moduleThreadInit(std::bind(&CameraManager::disconnectCamera, this));
 
     if (ImGui::Button("Show Camera Info"))
         ImGui::OpenPopup("Camera Info");
@@ -150,6 +178,48 @@ void CameraManager::setupCamera()
 
 void CameraManager::folderPart()
 {
+    static char inputPath[64] = ".";
+
+    ImGui::InputText("", inputPath, sizeof(inputPath));
+
+    if (this->_initFolderPath) {
+        std::memset(inputPath, 0, sizeof(inputPath));
+        std::strcat(inputPath, this->_folderPath.c_str());
+        this->_initFolderPath = false;
+    }
+
+    ImGui::SameLine();
+    if (ImGui::Button("Open folder")) {
+        this->_folderDialog = true;
+        this->_uiDisable = true;
+    }
+
+    if (this->_folderDialog) {
+        ImGui::EndDisabled();
+
+        IGFD::FileDialogConfig config;
+
+        config.path = inputPath;
+        config.flags = ImGuiFileDialogFlags_DontShowHiddenFiles;
+
+        ImGuiFileDialog::Instance()->OpenDialog("ChooseFolder", "Choose a Directory", nullptr, config);
+
+        if (ImGuiFileDialog::Instance()->Display("ChooseFolder")) {
+            if (ImGuiFileDialog::Instance()->IsOk()) {
+                std::string folderPathName = ImGuiFileDialog::Instance()->GetCurrentPath();
+                this->_folderPath = folderPathName;
+                this->_initFolderPath = true;
+                this->_folderDialog = false;
+                this->_uiDisable = false;
+            }
+            ImGuiFileDialog::Instance()->Close();
+            this->_folderDialog = false;
+            this->_uiDisable = false;
+        }
+
+        ImGui::BeginDisabled(this->_uiDisable);
+    }
+
     if (this->_folderPath.empty())
         return;
 
@@ -159,7 +229,7 @@ void CameraManager::folderPart()
 void CameraManager::picturePart()
 {
     if (ImGui::Button("Take Picture"))
-        this->takePicture();
+        this->moduleThreadInit(std::bind(&CameraManager::takePicture, this));
 
     static bool autoCapture = false;
     ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -194,7 +264,7 @@ void CameraManager::picturePart()
                     this->_lastCapture = std::time(0);
                     this->_inputShots--;
                     try {
-                        this->takePicture();
+                        this->moduleThreadInit(std::bind(&CameraManager::takePicture, this));
                         this->_inputTime = this->_saveInputTime;
                     } catch (std::exception &error) {
                         spdlog::error(error.what());
@@ -230,6 +300,8 @@ void CameraManager::moduleLoop()
 {
     ImGui::Begin("Camera Manager", &this->state);
 
+    ImGui::BeginDisabled(this->_uiDisable);
+
     ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
     if (ImGui::TreeNodeEx("Set Camera", nodeFlags)) {
@@ -237,28 +309,43 @@ void CameraManager::moduleLoop()
         ImGui::TreePop();
     }
 
+    ImGui::EndDisabled();
+
     ImGui::End();
 }
 
 void CameraManager::moduleClose()
 {
+    if (this->_camera) {
+        gp_camera_exit(this->_camera, this->_context);
+        gp_camera_free(this->_camera);
+    }
     if (this->_cameraList)
         gp_list_free(this->_cameraList);
     if (this->_portInfoList)
         gp_port_info_list_free(this->_portInfoList);
-    if (this->_camera)
-        gp_camera_free(this->_camera);
     gp_context_unref(this->_context);
 }
 
-void CameraManager::moduleLoadSettings()
+void CameraManager::moduleSettingsLoad()
 {
     nlohmann::json obj = nullptr;
 
     (obj = this->_settings->getSetting("Explorer400D::CameraManager::State")) != nullptr ? this->state = obj.get<bool>() : this->state = false;
+    (obj = this->_settings->getSetting("Explorer400D::CameraManager::FolderPath")) != nullptr ? this->_folderPath = obj.get<std::string>() : this->_folderPath = "";
+
+    if (!this->_folderPath.empty() && !std::filesystem::exists(this->_folderPath)) {
+        spdlog::warn("Folder path {} doesn't exist", this->_folderPath);
+        this->_folderPath.clear();
+    } else {
+        this->_initFolderPath = true;
+    }
 }
 
-void CameraManager::moduleSaveSettings()
+void CameraManager::moduleSettingsSave()
 {
     this->_settings->setSetting("Explorer400D::CameraManager::State", this->state);
+
+    if (!this->_folderPath.empty())
+        this->_settings->setSetting("Explorer400D::CameraManager::FolderPath", this->_folderPath);
 }

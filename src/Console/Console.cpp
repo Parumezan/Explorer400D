@@ -18,14 +18,14 @@ void Console::moduleLoop()
     ImGui::End();
 }
 
-void Console::moduleLoadSettings()
+void Console::moduleSettingsLoad()
 {
     nlohmann::json obj = nullptr;
 
     (obj = this->_settings->getSetting("Explorer400D::Console::State")) != nullptr ? this->state = obj.get<bool>() : this->state = false;
 }
 
-void Console::moduleSaveSettings()
+void Console::moduleSettingsSave()
 {
     this->_settings->setSetting("Explorer400D::Console::State", this->state);
 }

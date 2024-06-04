@@ -19,8 +19,8 @@ namespace Explorer400D
             void moduleInit() override;
             void moduleLoop() override;
 
-            void moduleLoadSettings() override;
-            void moduleSaveSettings() override;
+            void moduleSettingsLoad() override;
+            void moduleSettingsSave() override;
     };
 }
 

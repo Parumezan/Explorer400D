@@ -7,6 +7,12 @@ namespace Explorer400D
 {
     class Module
     {
+        protected:
+            std::atomic<bool> _stopSignal = false;
+            std::atomic<bool> _threadRunning = false;
+            std::atomic<bool> _uiDisable = false;
+            std::thread _moduleThread;
+
         public:
             Module() = default;
             ~Module() = default;
@@ -17,8 +23,11 @@ namespace Explorer400D
             virtual void moduleLoop();
             virtual void moduleClose();
 
-            virtual void moduleLoadSettings();
-            virtual void moduleSaveSettings();
+            virtual void moduleSettingsLoad();
+            virtual void moduleSettingsSave();
+
+            void moduleThreadInit(std::function<void()> function);
+            void moduleThreadLoop();
     };
 } // namespace Explorer400D
 

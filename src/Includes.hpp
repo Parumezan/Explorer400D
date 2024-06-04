@@ -50,7 +50,7 @@ namespace Explorer400D
         STOPPED
     };
 
-    enum class ThreadState {
+    enum class InitThreadState {
         INIT,
         SAVE
     };

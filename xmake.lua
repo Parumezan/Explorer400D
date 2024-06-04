@@ -1,4 +1,10 @@
+set_project("Explorer400D")
+
+set_version("0.1.0")
+
 add_rules("mode.debug", "mode.release")
+
+includes("@builtin/xpack")
 
 add_requires("imgui docking", {configs = {glfw = true, opengl3 = true}, system = false})
 add_requires("glfw", "glad", "implot-homemade", "imgui-file-dialog-homemade", "stb", "spdlog", "nlohmann_json", {system = false})
@@ -17,6 +23,15 @@ target("Explorer400D")
 --     set_languages("c++20")
 --     add_files("test/**.cpp")
 --     add_packages("glfw", "glad", "imgui docking", "implot-homemade", "imgui-file-dialog-homemade", "libgphoto2", "libraw", "libcurl", "stb", "spdlog", "nlohmann_json")
+
+xpack("Explorer400D")
+    set_formats("nsis", "zip", "targz", "runself")
+    set_title("Explorer400D")
+    set_author("Pibe")
+    set_description("Explorer400D installer")
+    set_licensefile("LICENSE")
+    add_targets("Explorer400D")
+    add_sourcefiles("(src/**)")
 
 package("implot-homemade")
     set_homepage("https://github.com/epezent/implot")

@@ -21,12 +21,12 @@ void Settings::moduleInit()
 {
     std::ifstream file("settings.json");
 
-    if (file.is_open()) {
+    if (file.is_open() && file.peek() != std::ifstream::traits_type::eof())
         file >> this->_settings;
-        file.close();
-    } else {
+    else
         this->_settings = nlohmann::json::object();
-    }
+
+    file.close();
 }
 
 void Settings::moduleLoop()
@@ -51,7 +51,7 @@ void Settings::moduleClose()
     file.close();
 }
 
-void Settings::moduleLoadSettings()
+void Settings::moduleSettingsLoad()
 {
     nlohmann::json obj = nullptr;
 
@@ -62,7 +62,7 @@ void Settings::moduleLoadSettings()
     (obj = this->getSetting("ImPlot::Use24HourClock")) != nullptr ? ImPlot::GetStyle().Use24HourClock = obj.get<bool>() : ImPlot::GetStyle().Use24HourClock = false;
 }
 
-void Settings::moduleSaveSettings()
+void Settings::moduleSettingsSave()
 {
     this->setSetting("Explorer400D::Console::State", this->state);
 

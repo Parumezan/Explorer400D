@@ -22,7 +22,7 @@ namespace Explorer400D
 
             std::atomic<bool> _stopSignal = false;
             std::atomic<bool> _threadRunning = false;
-            std::atomic<ThreadState> _threadState = ThreadState::INIT;
+            std::atomic<InitThreadState> _threadState = InitThreadState::INIT;
             std::thread _moduleThread;
             std::atomic<size_t> _moduleIndex = 0;
 

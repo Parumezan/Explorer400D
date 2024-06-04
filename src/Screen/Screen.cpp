@@ -76,7 +76,7 @@ void Screen::_screenRender()
         ImGui::NewFrame();
 
         // Dockspace
-        ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+        ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID);
 
         // Main window
         switch (this->_state) {
@@ -108,15 +108,15 @@ void Screen::_screenInit()
             this->_threadRunning.store(true);
             spdlog::info("Initializing modules..");
 
-            this->_threadState.store(ThreadState::INIT);
+            this->_threadState.store(InitThreadState::INIT);
             for (this->_moduleIndex.store(0); this->_moduleIndex.load() < this->_modules.size(); this->_moduleIndex++)
                 this->_modules[this->_moduleIndex]->moduleInit();
 
             spdlog::info("Loading settings..");
 
-            this->_threadState.store(ThreadState::SAVE);
+            this->_threadState.store(InitThreadState::SAVE);
             for (this->_moduleIndex.store(0); this->_moduleIndex.load() < this->_modules.size(); this->_moduleIndex++)
-                this->_modules[this->_moduleIndex]->moduleLoadSettings();
+                this->_modules[this->_moduleIndex]->moduleSettingsLoad();
 
             spdlog::info("Modules initialized");
 
@@ -137,11 +137,11 @@ void Screen::_screenInit()
     ImGui::Begin("Loading Window", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoSavedSettings);
 
     switch (this->_threadState.load()) {
-    case ThreadState::INIT:
+    case InitThreadState::INIT:
         ImGui::Text("Initializing modules..");
         ImGui::ProgressBar((float)this->_moduleIndex.load() / this->_modules.size());
         break;
-    case ThreadState::SAVE:
+    case InitThreadState::SAVE:
         ImGui::Text("Loading settings..");
         ImGui::ProgressBar((float)this->_moduleIndex.load() / this->_modules.size());
         break;
@@ -152,9 +152,12 @@ void Screen::_screenInit()
 
 void Screen::_screenLoop()
 {
-    for (auto &module : this->_modules)
-        if (module->state)
+    for (auto &module : this->_modules) {
+        if (module->state) {
             module->moduleLoop();
+            module->moduleThreadLoop();
+        }
+    }
 
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
@@ -192,13 +195,13 @@ void Screen::_screenClose()
             this->_threadRunning.store(true);
             spdlog::info("Saving settings..");
 
-            this->_threadState.store(ThreadState::SAVE);
+            this->_threadState.store(InitThreadState::SAVE);
             for (this->_moduleIndex.store(0); this->_moduleIndex.load() < this->_modules.size(); this->_moduleIndex++)
-                this->_modules[this->_moduleIndex]->moduleSaveSettings();
+                this->_modules[this->_moduleIndex]->moduleSettingsSave();
 
             spdlog::info("Closing modules..");
 
-            this->_threadState.store(ThreadState::INIT);
+            this->_threadState.store(InitThreadState::INIT);
             for (this->_moduleIndex.store(0); this->_moduleIndex.load() < this->_modules.size(); this->_moduleIndex++)
                 this->_modules[this->_moduleIndex]->moduleClose();
 
@@ -221,11 +224,11 @@ void Screen::_screenClose()
     ImGui::Begin("Closing Window", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoSavedSettings);
 
     switch (this->_threadState.load()) {
-    case ThreadState::INIT:
+    case InitThreadState::INIT:
         ImGui::Text("Closing modules..");
         ImGui::ProgressBar((float)this->_moduleIndex.load() / this->_modules.size());
         break;
-    case ThreadState::SAVE:
+    case InitThreadState::SAVE:
         ImGui::Text("Saving settings..");
         ImGui::ProgressBar((float)this->_moduleIndex.load() / this->_modules.size());
         break;
