@@ -2,28 +2,30 @@
 
 using namespace Explorer400D;
 
-CameraManager::CameraManager(Settings &settings)
+CameraManager::CameraManager(Settings &settings) : _settings(&settings)
 {
-    this->_settings = &settings;
-
     this->_context = nullptr;
     this->_cameraList = nullptr;
     this->_camera = nullptr;
     this->_portInfoList = nullptr;
 
+    this->_numCameras = 0;
     this->_isCameraSelected = false;
     this->_selectedCameraName = "Select a Camera";
     this->_selectedCameraPort = "";
     this->_cameraSummary = "";
 
     this->_folderPath = "";
+    this->_folderDialog = false;
+    this->_initFolderPath = false;
 
     this->_lastCapture = 0;
     this->_inputShots = 0;
     this->_inputTime = 0;
+    this->_saveInputTime = 0;
 }
 
-void CameraManager::listConnectedCameras()
+void CameraManager::_listConnectedCameras()
 {
     if (this->_cameraList)
         gp_list_free(this->_cameraList);
@@ -38,7 +40,7 @@ void CameraManager::listConnectedCameras()
     this->_selectedCameraName = info;
 }
 
-void CameraManager::connectCamera()
+void CameraManager::_connectCamera()
 {
     if (!this->_isCameraSelected) {
         spdlog::warn("No camera selected");
@@ -68,7 +70,7 @@ void CameraManager::connectCamera()
     spdlog::info("Connected to {} on port {}", this->_selectedCameraName, portNumber);
 }
 
-void CameraManager::disconnectCamera()
+void CameraManager::_disconnectCamera()
 {
     if (this->_camera) {
         gp_camera_exit(this->_camera, this->_context);
@@ -93,7 +95,7 @@ void CameraManager::disconnectCamera()
     }
 }
 
-void CameraManager::takePicture()
+void CameraManager::_takePicture()
 {
     CameraFilePath cameraFilePath;
     gp_camera_capture(this->_camera, GP_CAPTURE_IMAGE, &cameraFilePath, this->_context);
@@ -111,10 +113,10 @@ void CameraManager::takePicture()
     gp_camera_file_delete(this->_camera, cameraFilePath.folder, cameraFilePath.name, this->_context);
 }
 
-void CameraManager::setupCamera()
+void CameraManager::_setupCamera()
 {
     // ! Without a label the combo box doesn't work
-    if (ImGui::BeginCombo("-", this->_selectedCameraName.c_str())) {
+    if (ImGui::BeginCombo("Camera List", this->_selectedCameraName.c_str())) {
         if (this->_cameraList != nullptr) {
             for (size_t idx = 0; idx < this->_numCameras; idx++) {
                 const char *cameraName;
@@ -138,21 +140,21 @@ void CameraManager::setupCamera()
         ImGui::EndCombo();
     }
 
-    ImGui::SameLine();
     if (ImGui::Button("Auto Detect"))
-        this->moduleThreadInit(std::bind(&CameraManager::listConnectedCameras, this));
+        this->moduleThreadInit(std::bind(&CameraManager::_listConnectedCameras, this));
 
     ImGui::SameLine();
     if (ImGui::Button("Connect"))
-        this->moduleThreadInit(std::bind(&CameraManager::connectCamera, this));
+        this->moduleThreadInit(std::bind(&CameraManager::_connectCamera, this));
 
     if (this->_camera == nullptr)
         return;
 
     ImGui::SameLine();
     if (ImGui::Button("Disconnect"))
-        this->moduleThreadInit(std::bind(&CameraManager::disconnectCamera, this));
+        this->moduleThreadInit(std::bind(&CameraManager::_disconnectCamera, this));
 
+    ImGui::SameLine();
     if (ImGui::Button("Show Camera Info"))
         ImGui::OpenPopup("Camera Info");
 
@@ -173,14 +175,14 @@ void CameraManager::setupCamera()
         ImGui::EndPopup();
     }
 
-    this->folderPart();
+    this->_folderPart();
 }
 
-void CameraManager::folderPart()
+void CameraManager::_folderPart()
 {
     static char inputPath[64] = ".";
 
-    ImGui::InputText("", inputPath, sizeof(inputPath));
+    ImGui::InputText("Pictures Destination", inputPath, sizeof(inputPath), ImGuiInputTextFlags_ReadOnly);
 
     if (this->_initFolderPath) {
         std::memset(inputPath, 0, sizeof(inputPath));
@@ -188,8 +190,7 @@ void CameraManager::folderPart()
         this->_initFolderPath = false;
     }
 
-    ImGui::SameLine();
-    if (ImGui::Button("Open folder")) {
+    if (ImGui::Button("Choose Folder")) {
         this->_folderDialog = true;
         this->_uiDisable = true;
     }
@@ -223,13 +224,13 @@ void CameraManager::folderPart()
     if (this->_folderPath.empty())
         return;
 
-    this->picturePart();
+    this->_picturePart();
 }
 
-void CameraManager::picturePart()
+void CameraManager::_picturePart()
 {
     if (ImGui::Button("Take Picture"))
-        this->moduleThreadInit(std::bind(&CameraManager::takePicture, this));
+        this->moduleThreadInit(std::bind(&CameraManager::_takePicture, this));
 
     static bool autoCapture = false;
     ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -264,7 +265,7 @@ void CameraManager::picturePart()
                     this->_lastCapture = std::time(0);
                     this->_inputShots--;
                     try {
-                        this->moduleThreadInit(std::bind(&CameraManager::takePicture, this));
+                        this->moduleThreadInit(std::bind(&CameraManager::_takePicture, this));
                         this->_inputTime = this->_saveInputTime;
                     } catch (std::exception &error) {
                         spdlog::error(error.what());
@@ -305,7 +306,7 @@ void CameraManager::moduleLoop()
     ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
     if (ImGui::TreeNodeEx("Set Camera", nodeFlags)) {
-        this->setupCamera();
+        this->_setupCamera();
         ImGui::TreePop();
     }
 

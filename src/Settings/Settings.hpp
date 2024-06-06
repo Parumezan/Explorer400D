@@ -15,6 +15,8 @@ namespace Explorer400D
             Settings() = default;
             ~Settings() = default;
 
+            void setupStyle();
+
             void setSetting(const std::string &key, const nlohmann::json &value);
             nlohmann::json getSetting(const std::string &key);
             void deleteSetting(const std::string &key);

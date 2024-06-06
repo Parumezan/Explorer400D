@@ -6,6 +6,8 @@
 #include "Includes.hpp"
 #include "Module/Module.hpp"
 #include "Settings/Settings.hpp"
+#include "Weather/Weather.hpp"
+#include "WebFetch/WebFetch.hpp"
 
 namespace Explorer400D
 {
@@ -17,8 +19,10 @@ namespace Explorer400D
             std::vector<Module *> _modules;
 
             Settings _settings;
+            WebFetch _webFetch;
             Console _console;
             CameraManager _cameraManager;
+            Weather _weather;
 
             std::atomic<bool> _stopSignal = false;
             std::atomic<bool> _threadRunning = false;

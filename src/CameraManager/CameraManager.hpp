@@ -32,18 +32,18 @@ namespace Explorer400D
             int _saveInputTime;
             std::time_t _lastCapture;
 
+            void _listConnectedCameras();
+            void _connectCamera();
+            void _disconnectCamera();
+            void _takePicture();
+
+            void _setupCamera();
+            void _folderPart();
+            void _picturePart();
+
         public:
             CameraManager(Settings &settings);
             ~CameraManager() = default;
-
-            void listConnectedCameras();
-            void connectCamera();
-            void disconnectCamera();
-            void takePicture();
-
-            void setupCamera();
-            void folderPart();
-            void picturePart();
 
             void moduleInit() override;
             void moduleLoop() override;
