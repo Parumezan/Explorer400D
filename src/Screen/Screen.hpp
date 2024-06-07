@@ -4,6 +4,7 @@
 #include "CameraManager/CameraManager.hpp"
 #include "Console/Console.hpp"
 #include "Includes.hpp"
+#include "Map/Map.hpp"
 #include "Module/Module.hpp"
 #include "Settings/Settings.hpp"
 #include "Weather/Weather.hpp"
@@ -22,6 +23,7 @@ namespace Explorer400D
             WebFetch _webFetch;
             Console _console;
             CameraManager _cameraManager;
+            Map _map;
             Weather _weather;
 
             std::atomic<bool> _stopSignal = false;

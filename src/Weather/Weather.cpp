@@ -12,18 +12,32 @@ void Weather::_setLocation()
 
     ImGui::InputText("Search a location", inputLocation, sizeof(inputLocation));
 
-    if (ImGui::Button("Search")) {
-        // Fetch the location
-    }
+    if (ImGui::Button("Search"))
+        this->moduleThreadInit(std::bind(&Weather::_fetchLocationSearch, this, inputLocation));
+}
+
+void Weather::_fetchLocationSearch(char location[64])
+{
+}
+
+void Weather::setLocation(Location location)
+{
+    this->_location = location;
 }
 
 void Weather::moduleInit()
 {
+    this->_weatherGraphs.push_back(WeatherGraph("Cloud Cover", "Percentage (%)"));
+    this->_weatherGraphs.push_back(WeatherGraph("Temperature", "Celcius (°C)"));
+    this->_weatherGraphs.push_back(WeatherGraph("Precipitation", "Probability (%)"));
+    this->_weatherGraphs.push_back(WeatherGraph("Wind", "Kilometers per hour (km/h)"));
 }
 
 void Weather::moduleLoop()
 {
     ImGui::Begin("Weather", &this->state);
+
+    ImGui::BeginDisabled(this->_uiDisable);
 
     ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
@@ -45,6 +59,8 @@ void Weather::moduleLoop()
     if (ImGui::TreeNodeEx("Wind", nodeFlags)) {
         ImGui::TreePop();
     }
+
+    ImGui::EndDisabled();
 
     ImGui::End();
 }

@@ -6,6 +6,8 @@ add_rules("mode.debug", "mode.release")
 
 includes("@builtin/xpack")
 
+set_runtimes("stdc++_static")
+
 add_requires("imgui docking", {configs = {glfw = true, opengl3 = true}, system = false})
 add_requires("glfw", "glad", "implot-homemade", "imgui-file-dialog-homemade", "stb", "spdlog", "nlohmann_json", {system = false})
 add_requires("libgphoto2", "libraw", "libcurl")
@@ -16,6 +18,10 @@ target("Explorer400D")
     add_files("src/**.cpp")
     add_includedirs("src")
     add_packages("glfw", "glad", "imgui docking", "implot-homemade", "imgui-file-dialog-homemade", "libgphoto2", "libraw", "libcurl", "stb", "spdlog", "nlohmann_json")
+
+    -- if is_plat("mingw") then
+    --     add_ldflags("-static-libgcc", "-static-libstdc++", "-static")
+    -- end
 
 -- target("test_interface")
 --     set_default(false)

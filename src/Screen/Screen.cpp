@@ -4,7 +4,7 @@ using namespace Explorer400D;
 
 extern bool stopSignal;
 
-Screen::Screen() : _console(this->_settings), _cameraManager(this->_settings), _weather(this->_settings, this->_webFetch)
+Screen::Screen() : _console(this->_settings), _cameraManager(this->_settings), _map(this->_settings, this->_webFetch), _weather(this->_settings, this->_webFetch)
 {
     if (!glfwInit())
         throw std::runtime_error("Failed to initialize GLFW");
@@ -45,6 +45,7 @@ Screen::Screen() : _console(this->_settings), _cameraManager(this->_settings), _
     this->_modules.push_back(&this->_webFetch);
     this->_modules.push_back(&this->_console);
     this->_modules.push_back(&this->_cameraManager);
+    this->_modules.push_back(&this->_map);
     this->_modules.push_back(&this->_weather);
 
     // Start the screen loop
@@ -171,10 +172,10 @@ void Screen::_screenLoop()
         }
         if (ImGui::BeginMenu("Tools")) {
             ImGui::MenuItem("Camera Manager", "Ctrl+M", &this->_cameraManager.state);
-            // ImGui::MenuItem("ImgViewer", "Ctrl+I", &this->_imgViewer->state);
+            ImGui::MenuItem("Map", "Ctrl+Alt+M", &this->_map.state);
             ImGui::MenuItem("Weather", "Ctrl+W", &this->_weather.state);
+            // ImGui::MenuItem("ImgViewer", "Ctrl+I", &this->_imgViewer->state);
             // ImGui::MenuItem("Moon", "Ctrl+K", &this->_moon->state);
-            // ImGui::MenuItem("Map", "Ctrl+Alt+M", &this->_map->state);
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Settings")) {
