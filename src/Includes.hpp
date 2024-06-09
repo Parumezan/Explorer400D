@@ -31,6 +31,7 @@
 
 // Include nlohmann/json
 #include "nlohmann/json.hpp"
+using json = nlohmann::json;
 
 // Include curl
 #include <curl/curl.h>

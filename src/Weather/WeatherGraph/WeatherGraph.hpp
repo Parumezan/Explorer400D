@@ -13,14 +13,23 @@ namespace Explorer400D
             std::pair<double, double> _range;
             bool _isShaded;
             std::vector<double> _time;
-            std::map<std::string, std::vector<double>> _data;
+            std::map<std::pair<std::string, std::string>, std::vector<double>> _data;
 
         public:
             WeatherGraph(std::string name, std::string unit, std::pair<double, double> range = {0.0, 0.0}, bool isShaded = false);
             ~WeatherGraph() = default;
 
-            void addData(std::string key, std::vector<double> data);
+            std::string getName();
+
+            std::map<std::pair<std::string, std::string>, std::vector<double>> getData();
+
+            void addData(std::pair<std::string, std::string> key, std::vector<double> data = {});
             void addTime(std::vector<double> time);
+
+            void setData(std::map<std::pair<std::string, std::string>, std::vector<double>> data);
+            void setTime(std::vector<double> time);
+
+            void clearData();
 
             void drawGraph();
     };

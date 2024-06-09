@@ -17,18 +17,12 @@ WebFetchType WebFetch::fetch(const std::string &url, WebFetchMethod method, cons
     std::string readBuffer = "";
     long httpCode = -1;
 
-    spdlog::info("Fetching URL: {}", url);
-
     if (!(curl = curl_easy_init())) {
         spdlog::error("curl_easy_init() failed");
         return {readBuffer, httpCode};
     }
 
-    spdlog::info("curl_easy_init() success");
-
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-
-    spdlog::info("curl_easy_setopt(1) success");
 
     switch (method) {
     case WebFetchMethod::FETCH_GET:
@@ -49,27 +43,17 @@ WebFetchType WebFetch::fetch(const std::string &url, WebFetchMethod method, cons
         method = WebFetchMethod::FETCH_GET;
     }
 
-    spdlog::info("curl_easy_setopt(2) success");
-
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _writeCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-
-    spdlog::info("curl_easy_setopt(3) success");
 
     res = curl_easy_perform(curl);
 
     if (res != CURLE_OK)
         spdlog::error("curl_easy_perform() failed: {}", curl_easy_strerror(res));
 
-    spdlog::info("curl_easy_perform() success");
-
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
 
-    spdlog::info("curl_easy_getinfo() success");
-
     curl_easy_cleanup(curl);
-
-    spdlog::info("curl_easy_cleanup() success");
 
     return {readBuffer, httpCode};
 }

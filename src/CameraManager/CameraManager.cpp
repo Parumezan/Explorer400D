@@ -330,7 +330,7 @@ void CameraManager::moduleClose()
 
 void CameraManager::moduleSettingsLoad()
 {
-    nlohmann::json obj = nullptr;
+    json obj = nullptr;
 
     (obj = this->_settings->getSetting("Explorer400D::CameraManager::State")) != nullptr ? this->state = obj.get<bool>() : this->state = false;
     (obj = this->_settings->getSetting("Explorer400D::CameraManager::FolderPath")) != nullptr ? this->_folderPath = obj.get<std::string>() : this->_folderPath = "";

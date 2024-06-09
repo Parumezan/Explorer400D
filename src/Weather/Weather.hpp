@@ -12,6 +12,13 @@ namespace Explorer400D
 {
     static const std::vector<int> ForecastDays = {1, 3, 7, 14, 16};
 
+    enum class WeatherSearchState {
+        NONE,
+        FOUND,
+        SELECTED,
+        BAD
+    };
+
     class Weather : public Module
     {
         private:
@@ -19,11 +26,25 @@ namespace Explorer400D
             WebFetch *_webFetch;
 
             Location _location;
+            std::vector<Location> _locations;
+            bool _locationSet = false;
+
+            WeatherSearchState _searchState = WeatherSearchState::NONE;
+            std::string _searchStateText = "";
+
             std::vector<WeatherGraph> _weatherGraphs;
+
+            bool _initGraphs = false;
+            bool _fetchable = false;
+            bool _autoFetch = false;
+            int _sliderTime = 0;
+            int _forecastDays = 3;
+            std::time_t _lastFetch;
 
             void _setLocation();
 
             void _fetchLocationSearch(char location[64]);
+            void _fetchWeatherData();
 
         public:
             Weather(Settings &settings, WebFetch &webFetch);

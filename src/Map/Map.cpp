@@ -27,7 +27,7 @@ void Map::moduleClose()
 
 void Map::moduleSettingsLoad()
 {
-    nlohmann::json obj = nullptr;
+    json obj = nullptr;
 
     (obj = this->_settings->getSetting("Explorer400D::Map::State")) != nullptr ? this->state = obj.get<bool>() : this->state = false;
 }

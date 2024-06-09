@@ -20,7 +20,7 @@ void Console::moduleLoop()
 
 void Console::moduleSettingsLoad()
 {
-    nlohmann::json obj = nullptr;
+    json obj = nullptr;
 
     (obj = this->_settings->getSetting("Explorer400D::Console::State")) != nullptr ? this->state = obj.get<bool>() : this->state = false;
 }

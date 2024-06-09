@@ -9,7 +9,7 @@ namespace Explorer400D
     class Settings : public Module
     {
         private:
-            nlohmann::json _settings;
+            json _settings;
 
         public:
             Settings() = default;
@@ -17,8 +17,8 @@ namespace Explorer400D
 
             void setupStyle();
 
-            void setSetting(const std::string &key, const nlohmann::json &value);
-            nlohmann::json getSetting(const std::string &key);
+            void setSetting(const std::string &key, const json &value);
+            json getSetting(const std::string &key);
             void deleteSetting(const std::string &key);
 
             void moduleInit() override;

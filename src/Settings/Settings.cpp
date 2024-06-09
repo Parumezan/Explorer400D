@@ -93,12 +93,12 @@ void Settings::setupStyle()
     style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.800000011920929f, 0.800000011920929f, 0.800000011920929f, 0.3499999940395355f);
 }
 
-void Settings::setSetting(const std::string &key, const nlohmann::json &value)
+void Settings::setSetting(const std::string &key, const json &value)
 {
     this->_settings[key] = value;
 }
 
-nlohmann::json Settings::getSetting(const std::string &key)
+json Settings::getSetting(const std::string &key)
 {
     return this->_settings[key];
 }
@@ -115,7 +115,7 @@ void Settings::moduleInit()
     if (file.is_open() && file.peek() != std::ifstream::traits_type::eof())
         file >> this->_settings;
     else
-        this->_settings = nlohmann::json::object();
+        this->_settings = json::object();
 
     file.close();
 }
@@ -144,7 +144,7 @@ void Settings::moduleClose()
 
 void Settings::moduleSettingsLoad()
 {
-    nlohmann::json obj = nullptr;
+    json obj = nullptr;
 
     (obj = this->getSetting("Explorer400D::Console::State")) != nullptr ? this->state = obj.get<bool>() : this->state = false;
 
