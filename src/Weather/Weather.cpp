@@ -186,11 +186,11 @@ void Weather::_fetchWeatherData()
 
         graph.setData(newData);
         graph.setTime(time);
+
+        this->_initGraphs = true;
     }
 
     spdlog::info("Weather data fetched");
-
-    this->_initGraphs = true;
 }
 
 void Weather::setLocation(Location location)

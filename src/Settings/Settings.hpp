@@ -17,6 +17,8 @@ namespace Explorer400D
 
             void setupStyle();
 
+            bool fileExists(std::string &path, std::string message);
+
             void setSetting(const std::string &key, const json &value);
             json getSetting(const std::string &key);
             void deleteSetting(const std::string &key);

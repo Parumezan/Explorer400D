@@ -93,6 +93,16 @@ void Settings::setupStyle()
     style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.800000011920929f, 0.800000011920929f, 0.800000011920929f, 0.3499999940395355f);
 }
 
+bool Settings::fileExists(std::string &path, std::string message)
+{
+    if (!std::filesystem::exists(path)) {
+        spdlog::warn("{} {} doesn't exist", message, path);
+        path = ".";
+        return false;
+    }
+    return true;
+}
+
 void Settings::setSetting(const std::string &key, const json &value)
 {
     this->_settings[key] = value;
