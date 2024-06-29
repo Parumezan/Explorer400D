@@ -46,6 +46,18 @@ void CameraManager::_listConnectedCameras()
 
 void CameraManager::_connectCamera()
 {
+    if (this->_numCameras == 1 && this->_isCameraSelected == false) {
+        const char *cameraName;
+        const char *cameraPort;
+
+        gp_list_get_name(this->_cameraList, 0, &cameraName);
+        gp_list_get_value(this->_cameraList, 0, &cameraPort);
+
+        this->_selectedCameraName = cameraName;
+        this->_selectedCameraPort = cameraPort;
+        this->_isCameraSelected = true;
+    }
+
     if (!this->_isCameraSelected) {
         spdlog::warn("No camera selected");
         return;
@@ -108,8 +120,10 @@ void CameraManager::_takePicture()
     gp_file_new(&cameraFile);
     gp_camera_file_get(this->_camera, cameraFilePath.folder, cameraFilePath.name, GP_FILE_TYPE_NORMAL, cameraFile, this->_context);
 
-    std::string filePath = this->_folderPath + "/" + cameraFilePath.name;
+    std::string filePath = this->_folderPath + _PLAT_SEPARATOR + cameraFilePath.name;
     gp_file_save(cameraFile, filePath.c_str());
+    this->_lastPicturePath = filePath;
+    this->_newPicture.store(true);
 
     gp_file_free(cameraFile);
     spdlog::info("Saved picture to {}", filePath);
@@ -161,13 +175,14 @@ void CameraManager::_configGetCamera()
 
 void CameraManager::_configCameraSetup()
 {
-    static char inputPath[64] = ".";
+    static char inputPath[_INPUT_TEXT_SIZE] = ".";
 
     ImGui::InputText("Camera Config File", inputPath, sizeof(inputPath), ImGuiInputTextFlags_ReadOnly);
 
     if (this->_initConfigPath) {
         std::memset(inputPath, 0, sizeof(inputPath));
-        std::strcat(inputPath, this->_cameraConfigPath.c_str());
+        std::string path = this->_cameraConfigPath + _PLAT_SEPARATOR + this->_cameraConfigFile;
+        std::strcat(inputPath, path.c_str());
         // load camera config
         this->_initConfigPath = false;
     }
@@ -182,15 +197,16 @@ void CameraManager::_configCameraSetup()
 
         IGFD::FileDialogConfig config;
 
-        config.path = inputPath;
+        config.path = this->_cameraConfigPath;
+        config.fileName = this->_cameraConfigFile;
         config.flags = ImGuiFileDialogFlags_DontShowHiddenFiles;
 
         ImGuiFileDialog::Instance()->OpenDialog("ChooseCameraConfig", "Choose a Camera Config File", ".json", config);
 
         if (ImGuiFileDialog::Instance()->Display("ChooseCameraConfig")) {
             if (ImGuiFileDialog::Instance()->IsOk()) {
-                std::string filePathName = ImGuiFileDialog::Instance()->GetCurrentPath();
-                this->_cameraConfigPath = filePathName;
+                this->_cameraConfigPath = ImGuiFileDialog::Instance()->GetCurrentPath();
+                this->_cameraConfigFile = ImGuiFileDialog::Instance()->GetCurrentFileName();
                 this->_initConfigPath = true;
                 this->_configDialog = false;
                 this->_uiDisable = false;
@@ -203,8 +219,9 @@ void CameraManager::_configCameraSetup()
         ImGui::BeginDisabled(this->_uiDisable);
     }
 
-    if (this->_cameraConfigPath.empty())
+    if (this->_cameraConfigPath.empty() || this->_cameraConfigFile.empty())
         return;
+    // TODO Check config file
 
     if (ImGui::Button("Get Camera Config")) {
         this->_configCameraLoaded.store(false);
@@ -300,7 +317,7 @@ void CameraManager::_cameraStartupSetup()
 
 void CameraManager::_cameraFolderDestination()
 {
-    static char inputPath[64] = ".";
+    static char inputPath[_INPUT_TEXT_SIZE] = ".";
 
     ImGui::InputText("Pictures Destination", inputPath, sizeof(inputPath), ImGuiInputTextFlags_ReadOnly);
 
@@ -349,11 +366,17 @@ void CameraManager::_cameraFolderDestination()
 
 void CameraManager::_cameraPictureTrigger()
 {
-    if (ImGui::Button("Take Picture"))
-        this->moduleThreadInit(std::bind(&CameraManager::_takePicture, this));
-
     static bool autoCapture = false;
     ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+    if (autoCapture) {
+        ImGui::BeginDisabled();
+        ImGui::Button("Take Picture");
+        ImGui::EndDisabled();
+    } else {
+        if (ImGui::Button("Take Picture"))
+            this->moduleThreadInit(std::bind(&CameraManager::_takePicture, this));
+    }
 
     ImGui::SameLine();
     ImGui::Checkbox("Auto Capture", &autoCapture);
@@ -404,6 +427,19 @@ void CameraManager::_cameraPictureTrigger()
             ImGui::TreePop();
         }
     }
+
+    if (this->_newPicture.load()) {
+        this->_imgViewer.release();
+        this->_imgViewer = std::make_unique<ImgViewer>(this->_lastPicturePath);
+        this->_imgViewer->loadImg();
+        this->_newPicture.store(false);
+    } else {
+        if (ImGui::TreeNodeEx("Picture Visualizer", nodeFlags)) {
+            if (this->_imgViewer != nullptr)
+                this->_imgViewer->moduleLoop();
+            ImGui::TreePop();
+        }
+    }
 }
 
 void CameraManager::moduleInit()
@@ -445,6 +481,8 @@ void CameraManager::moduleLoop()
 
 void CameraManager::moduleClose()
 {
+    if (this->_imgViewer)
+        this->_imgViewer.release();
     if (this->_configWidget)
         gp_widget_free(this->_configWidget);
     if (this->_camera) {
@@ -464,15 +502,24 @@ void CameraManager::moduleSettingsLoad()
 
     (obj = this->_settings->getSetting("Explorer400D::CameraManager::State")) != nullptr ? this->state = obj.get<bool>() : this->state = false;
     (obj = this->_settings->getSetting("Explorer400D::CameraManager::FolderPath")) != nullptr ? this->_folderPath = obj.get<std::string>() : this->_folderPath = "";
-    (obj = this->_settings->getSetting("Explorer400D::CameraManager::ConfigPath")) != nullptr ? this->_cameraConfigPath = obj.get<std::string>() : this->_cameraConfigPath = "";
+
+    std::string cameraConfigPath = ".";
+    (obj = this->_settings->getSetting("Explorer400D::CameraManager::ConfigPath")) != nullptr ? cameraConfigPath = obj.get<std::string>() : cameraConfigPath = "";
 
     this->_initFolderPath = this->_settings->fileExists(this->_folderPath, "Folder");
-    this->_initConfigPath = this->_settings->fileExists(this->_cameraConfigPath, "Config file");
+    this->_initConfigPath = this->_settings->fileExists(cameraConfigPath, "Config file");
+
+    if (this->_initConfigPath) {
+        this->_cameraConfigPath = cameraConfigPath.substr(0, cameraConfigPath.find_last_of(_PLAT_SEPARATOR));
+        this->_cameraConfigFile = cameraConfigPath.substr(cameraConfigPath.find_last_of(_PLAT_SEPARATOR) + 1);
+    }
 }
 
 void CameraManager::moduleSettingsSave()
 {
     this->_settings->setSetting("Explorer400D::CameraManager::State", this->state);
     this->_settings->setSetting("Explorer400D::CameraManager::FolderPath", this->_folderPath);
-    this->_settings->setSetting("Explorer400D::CameraManager::ConfigPath", this->_cameraConfigPath);
+
+    std::string cameraConfigPath = this->_cameraConfigPath + _PLAT_SEPARATOR + this->_cameraConfigFile;
+    this->_settings->setSetting("Explorer400D::CameraManager::ConfigPath", cameraConfigPath);
 }

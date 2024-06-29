@@ -96,7 +96,7 @@ void Settings::setupStyle()
 bool Settings::fileExists(std::string &path, std::string message)
 {
     if (!std::filesystem::exists(path)) {
-        spdlog::warn("{} {} doesn't exist", message, path);
+        spdlog::warn("{} '{}' doesn't exist", message, path);
         path = ".";
         return false;
     }
@@ -156,7 +156,7 @@ void Settings::moduleSettingsLoad()
 {
     json obj = nullptr;
 
-    (obj = this->getSetting("Explorer400D::Console::State")) != nullptr ? this->state = obj.get<bool>() : this->state = false;
+    (obj = this->getSetting("Explorer400D::Settings::State")) != nullptr ? this->state = obj.get<bool>() : this->state = false;
 
     (obj = this->getSetting("ImPlot::UseLocalTime")) != nullptr ? ImPlot::GetStyle().UseLocalTime = obj.get<bool>() : ImPlot::GetStyle().UseLocalTime = false;
     (obj = this->getSetting("ImPlot::UseISO8601")) != nullptr ? ImPlot::GetStyle().UseISO8601 = obj.get<bool>() : ImPlot::GetStyle().UseISO8601 = false;
@@ -165,7 +165,7 @@ void Settings::moduleSettingsLoad()
 
 void Settings::moduleSettingsSave()
 {
-    this->setSetting("Explorer400D::Console::State", this->state);
+    this->setSetting("Explorer400D::Settings::State", this->state);
 
     this->setSetting("ImPlot::UseLocalTime", ImPlot::GetStyle().UseLocalTime);
     this->setSetting("ImPlot::UseISO8601", ImPlot::GetStyle().UseISO8601);

@@ -2,10 +2,12 @@
 #define SCREEN_HPP_
 
 #include "CameraManager/CameraManager.hpp"
+#include "CameraOMatic/CameraOMatic.hpp"
 #include "Console/Console.hpp"
 #include "Includes.hpp"
 #include "Map/Map.hpp"
 #include "Module/Module.hpp"
+#include "SelfGuiding/SelfGuiding.hpp"
 #include "Settings/Settings.hpp"
 #include "Weather/Weather.hpp"
 #include "WebFetch/WebFetch.hpp"
@@ -23,14 +25,18 @@ namespace Explorer400D
             WebFetch _webFetch;
             Console _console;
             CameraManager _cameraManager;
+            CameraOMatic _cameraOMatic;
             Map _map;
             Weather _weather;
+            SelfGuiding _selfGuiding;
 
             std::atomic<bool> _stopSignal = false;
             std::atomic<bool> _threadRunning = false;
             std::atomic<InitThreadState> _threadState = InitThreadState::INIT;
             std::thread _moduleThread;
             std::atomic<size_t> _moduleIndex = 0;
+
+            // void _setWindowIcon();
 
             void _screenRender();
             void _screenInit();

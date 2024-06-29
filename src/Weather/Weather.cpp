@@ -218,6 +218,10 @@ void Weather::moduleInit()
 
     precipitation.addData(std::make_pair("Precipitation Probability", "precipitation_probability"));
 
+    WeatherGraph humidity("Humidity", "Percentage (%)", {0.0, 100.0});
+
+    humidity.addData(std::make_pair("Relative Humidity 2m", "relative_humidity_2m"));
+
     WeatherGraph wind("Wind", "Kilometers per hour (km/h)", {0.0, 10000.0});
 
     wind.addData(std::make_pair("Wind Speed 180m", "windspeed_180m"));
@@ -229,6 +233,7 @@ void Weather::moduleInit()
     this->_weatherGraphs.push_back(cloudCover);
     this->_weatherGraphs.push_back(temperature);
     this->_weatherGraphs.push_back(precipitation);
+    this->_weatherGraphs.push_back(humidity);
     this->_weatherGraphs.push_back(wind);
 }
 

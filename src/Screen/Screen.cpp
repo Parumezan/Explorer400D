@@ -4,7 +4,11 @@ using namespace Explorer400D;
 
 extern bool stopSignal;
 
-Screen::Screen() : _console(this->_settings), _cameraManager(this->_settings), _map(this->_settings, this->_webFetch), _weather(this->_settings, this->_webFetch)
+// #ifndef STB_IMAGE_IMPLEMENTATION
+//     #define STB_IMAGE_IMPLEMENTATION
+//     #include "stb_image.h"
+
+Screen::Screen() : _console(this->_settings), _cameraManager(this->_settings), _cameraOMatic(this->_settings), _map(this->_settings, this->_webFetch), _weather(this->_settings, this->_webFetch), _selfGuiding(this->_settings, this->_webFetch)
 {
     if (!glfwInit())
         throw std::runtime_error("Failed to initialize GLFW");
@@ -33,6 +37,7 @@ Screen::Screen() : _console(this->_settings), _cameraManager(this->_settings), _
     (void)io;
     // io.IniFilename = this->_imguiIniPath.c_str();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
     // Setup Dear ImGui style
     this->_settings.setupStyle();
@@ -45,8 +50,13 @@ Screen::Screen() : _console(this->_settings), _cameraManager(this->_settings), _
     this->_modules.push_back(&this->_webFetch);
     this->_modules.push_back(&this->_console);
     this->_modules.push_back(&this->_cameraManager);
+    this->_modules.push_back(&this->_cameraOMatic);
     this->_modules.push_back(&this->_map);
     this->_modules.push_back(&this->_weather);
+    this->_modules.push_back(&this->_selfGuiding);
+
+    // Set Window Icon
+    // this->_setWindowIcon();
 
     // Start the screen loop
     this->_screenRender();
@@ -63,8 +73,28 @@ Screen::~Screen()
     glfwTerminate();
 }
 
+// void Screen::_setWindowIcon()
+// {
+//     if (!std::filesystem::exists("icon.png")) {
+//         spdlog::warn("icon.png not found");
+//         return;
+//     }
+
+//     GLFWimage images[1];
+//     images[0].pixels = stbi_load("icon.png", &images[0].width, &images[0].height, 0, 4);
+
+//     if (!images[0].pixels) {
+//         spdlog::warn("Failed to load icon.png");
+//         return;
+//     }
+
+//     glfwSetWindowIcon(this->_window, 1, images);
+// }
+
 void Screen::_screenRender()
 {
+    glfwSwapInterval(4);
+
     while (true) {
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT);
@@ -99,6 +129,13 @@ void Screen::_screenRender()
         // Render the window
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+            GLFWwindow *backup_current_context = glfwGetCurrentContext();
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backup_current_context);
+        }
 
         // Swap the buffers
         glfwSwapBuffers(this->_window);
@@ -172,8 +209,12 @@ void Screen::_screenLoop()
         }
         if (ImGui::BeginMenu("Tools")) {
             ImGui::MenuItem("Camera Manager", "Ctrl+M", &this->_cameraManager.state);
+            ImGui::BeginDisabled();
+            ImGui::MenuItem("CameraOMatic", "Ctrl+O", &this->_cameraOMatic.state);
+            ImGui::EndDisabled();
             ImGui::MenuItem("Map", "Ctrl+Alt+M", &this->_map.state);
             ImGui::MenuItem("Weather", "Ctrl+W", &this->_weather.state);
+            ImGui::MenuItem("SelfGuiding", "Ctrl+Shift+S", &this->_selfGuiding.state);
             // ImGui::MenuItem("ImgViewer", "Ctrl+I", &this->_imgViewer->state);
             // ImGui::MenuItem("Moon", "Ctrl+K", &this->_moon->state);
             ImGui::EndMenu();

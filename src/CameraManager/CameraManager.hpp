@@ -2,6 +2,7 @@
 #define CAMERAMANAGER_HPP_
 
 #include "CameraSettings/CameraSettings.hpp"
+#include "ImgViewer/ImgViewer.hpp"
 #include "Includes.hpp"
 #include "Module/Module.hpp"
 #include "Settings/Settings.hpp"
@@ -37,7 +38,12 @@ namespace Explorer400D
             void _listConnectedCameras();
             void _connectCamera();
             void _disconnectCamera();
+
+            std::atomic<bool> _newCaptureProcessing = false;
+            std::atomic<bool> _newPicture = false;
+            std::string _lastPicturePath;
             void _takePicture();
+            std::unique_ptr<ImgViewer> _imgViewer = nullptr;
 
             void _cameraStartupSetup();
             void _cameraFolderDestination();
@@ -50,6 +56,7 @@ namespace Explorer400D
             bool _configCameraBinded = false;
             std::vector<CameraSettings> _cameraSettings;
             std::string _cameraConfigPath;
+            std::string _cameraConfigFile;
             bool _configDialog;
             bool _initConfigPath;
 

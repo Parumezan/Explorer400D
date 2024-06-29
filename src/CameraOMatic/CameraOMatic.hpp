@@ -1,21 +1,21 @@
-#ifndef CONSOLE_HPP_
-#define CONSOLE_HPP_
+#ifndef CAMERAOMATIC_HPP_
+#define CAMERAOMATIC_HPP_
 
+#include "CameraManager/CameraSettings/CameraSettings.hpp"
 #include "Includes.hpp"
 #include "Module/Module.hpp"
 #include "Settings/Settings.hpp"
 
 namespace Explorer400D
 {
-    class Console : public Module
+    class CameraOMatic : public Module
     {
         private:
             Settings *_settings;
-            std::ostringstream _consoleLogStream;
 
         public:
-            Console(Settings &settings);
-            ~Console() = default;
+            CameraOMatic(Settings &settings);
+            ~CameraOMatic() = default;
 
             void moduleInit() override;
             void moduleLoop() override;
@@ -24,6 +24,6 @@ namespace Explorer400D
             void moduleSettingsLoad() override;
             void moduleSettingsSave() override;
     };
-}
+} // namespace Explorer400D
 
-#endif /* !CONSOLE_HPP_ */
+#endif /* !CAMERAOMATIC_HPP_ */

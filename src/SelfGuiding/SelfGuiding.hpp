@@ -1,21 +1,22 @@
-#ifndef CONSOLE_HPP_
-#define CONSOLE_HPP_
+#ifndef SELFGUIDING_HPP_
+#define SELFGUIDING_HPP_
 
 #include "Includes.hpp"
 #include "Module/Module.hpp"
 #include "Settings/Settings.hpp"
+#include "WebFetch/WebFetch.hpp"
 
 namespace Explorer400D
 {
-    class Console : public Module
+    class SelfGuiding : public Module
     {
         private:
             Settings *_settings;
-            std::ostringstream _consoleLogStream;
+            WebFetch *_webFetch;
 
         public:
-            Console(Settings &settings);
-            ~Console() = default;
+            SelfGuiding(Settings &settings, WebFetch &webFetch);
+            ~SelfGuiding() = default;
 
             void moduleInit() override;
             void moduleLoop() override;
@@ -26,4 +27,4 @@ namespace Explorer400D
     };
 }
 
-#endif /* !CONSOLE_HPP_ */
+#endif /* !SELFGUIDING_HPP_ */
